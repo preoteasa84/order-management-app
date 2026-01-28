@@ -1364,7 +1364,7 @@ const App = () => {
           </div>
         </div>
         
-        {/* Spacer for mobile sticky button - ensures content clearance above fixed save button (height ~180px = save button container + bottom nav) */}
+        {/* Spacer for mobile sticky button - ensures content clearance above fixed save button (192px = save button container + bottom nav) */}
         <div className="h-48 lg:hidden"></div>
       </div>
     );
@@ -4147,7 +4147,7 @@ const App = () => {
       <Header />
       <div className="lg:flex">
         <Navigation />
-        {/* Main content area - scrollable on mobile with max-height (120px = header ~60px + padding ~60px) */}
+        {/* Main content area - scrollable on mobile with max-height (120px approximate offset for header + margins) */}
         <div className="w-full lg:flex-1 p-4 sm:p-6 pb-32 lg:pb-6 overflow-y-auto max-h-[calc(100vh-120px)]">
           {message && (
             <div
