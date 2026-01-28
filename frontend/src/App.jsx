@@ -20,6 +20,7 @@ import {
   MinusCircle,
   PlusCircle,
 } from "lucide-react";
+import { authService, apiRequest } from "./utils/auth.js";
 
 const App = () => {
   // API Configuration
@@ -41,13 +42,20 @@ const App = () => {
   const [contracts, setContracts] = useState([]);
   const [dayStatus, setDayStatus] = useState({});
 
-  // ✅ ADAUGĂ AICI - după toți useState-urile:
+  // Check authentication on mount
   useEffect(() => {
-    const loadAllData = async () => {
-      // ... cod existent...
-    };
-    loadAllData();
+    if (authService.isAuthenticated()) {
+      const user = authService.getUser();
+      setCurrentUser(user);
+    }
   }, []);
+
+  // Load data when authenticated
+  useEffect(() => {
+    if (currentUser) {
+      loadAllData();
+    }
+  }, [currentUser]);
 
   // ✅ ADAUGĂ ȘI ASTA - după useEffect-ul de loadAllData:
   useEffect(() => {
@@ -76,21 +84,11 @@ const App = () => {
     try {
       // Use API for clients and products
       if (key === 'clients') {
-        const response = await fetch(`${API_URL}/api/clients`);
-        if (response.ok) {
-          return await response.json();
-        }
-        console.warn('API not available for clients, using localStorage fallback');
-        const result = localStorage.getItem(key);
-        return result ? JSON.parse(result) : null;
+        const data = await apiRequest(`${API_URL}/api/clients`);
+        return data;
       } else if (key === 'products') {
-        const response = await fetch(`${API_URL}/api/products`);
-        if (response.ok) {
-          return await response.json();
-        }
-        console.warn('API not available for products, using localStorage fallback');
-        const result = localStorage.getItem(key);
-        return result ? JSON.parse(result) : null;
+        const data = await apiRequest(`${API_URL}/api/products`);
+        return data;
       } else {
         // Use localStorage for other data
         const result = localStorage.getItem(key);
@@ -135,15 +133,11 @@ const App = () => {
   // API helper functions for clients
   const createClient = async (client) => {
     try {
-      const response = await fetch(`${API_URL}/api/clients`, {
+      const data = await apiRequest(`${API_URL}/api/clients`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(client)
       });
-      if (response.ok) {
-        return await response.json();
-      }
-      throw new Error('Failed to create client');
+      return data;
     } catch (error) {
       console.error('Error creating client:', error);
       throw error;
@@ -152,15 +146,11 @@ const App = () => {
 
   const updateClient = async (id, client) => {
     try {
-      const response = await fetch(`${API_URL}/api/clients/${id}`, {
+      const data = await apiRequest(`${API_URL}/api/clients/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(client)
       });
-      if (response.ok) {
-        return await response.json();
-      }
-      throw new Error('Failed to update client');
+      return data;
     } catch (error) {
       console.error('Error updating client:', error);
       throw error;
@@ -169,13 +159,10 @@ const App = () => {
 
   const deleteClient = async (id) => {
     try {
-      const response = await fetch(`${API_URL}/api/clients/${id}`, {
+      const data = await apiRequest(`${API_URL}/api/clients/${id}`, {
         method: 'DELETE'
       });
-      if (response.ok) {
-        return await response.json();
-      }
-      throw new Error('Failed to delete client');
+      return data;
     } catch (error) {
       console.error('Error deleting client:', error);
       throw error;
@@ -185,15 +172,11 @@ const App = () => {
   // API helper functions for products
   const createProduct = async (product) => {
     try {
-      const response = await fetch(`${API_URL}/api/products`, {
+      const data = await apiRequest(`${API_URL}/api/products`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(product)
       });
-      if (response.ok) {
-        return await response.json();
-      }
-      throw new Error('Failed to create product');
+      return data;
     } catch (error) {
       console.error('Error creating product:', error);
       throw error;
@@ -202,15 +185,11 @@ const App = () => {
 
   const updateProduct = async (id, product) => {
     try {
-      const response = await fetch(`${API_URL}/api/products/${id}`, {
+      const data = await apiRequest(`${API_URL}/api/products/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(product)
       });
-      if (response.ok) {
-        return await response.json();
-      }
-      throw new Error('Failed to update product');
+      return data;
     } catch (error) {
       console.error('Error updating product:', error);
       throw error;
@@ -219,13 +198,10 @@ const App = () => {
 
   const deleteProduct = async (id) => {
     try {
-      const response = await fetch(`${API_URL}/api/products/${id}`, {
+      const data = await apiRequest(`${API_URL}/api/products/${id}`, {
         method: 'DELETE'
       });
-      if (response.ok) {
-        return await response.json();
-      }
-      throw new Error('Failed to delete product');
+      return data;
     } catch (error) {
       console.error('Error deleting product:', error);
       throw error;
@@ -236,12 +212,7 @@ const App = () => {
   const syncClientsToAPI = async (clientsList) => {
     try {
       // Get current clients from API
-      const response = await fetch(`${API_URL}/api/clients`);
-      if (!response.ok) {
-        console.warn('API not available, skipping sync');
-        return;
-      }
-      const existingClients = await response.json();
+      const existingClients = await apiRequest(`${API_URL}/api/clients`);
       const existingIds = new Set(existingClients.map(c => c.id));
 
       // Sync each client
@@ -264,12 +235,7 @@ const App = () => {
   const syncProductsToAPI = async (productsList) => {
     try {
       // Get current products from API
-      const response = await fetch(`${API_URL}/api/products`);
-      if (!response.ok) {
-        console.warn('API not available, skipping sync');
-        return;
-      }
-      const existingProducts = await response.json();
+      const existingProducts = await apiRequest(`${API_URL}/api/products`);
       const existingIds = new Set(existingProducts.map(p => p.id));
 
       // Sync each product
@@ -468,31 +434,25 @@ const App = () => {
       username: "",
       password: "",
     });
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
-    const handleLogin = () => {
-      const users = {
-        admin: { password: "admin", role: "admin", name: "Administrator" },
-        birou: { password: "birou", role: "birou", name: "Birou" },
-        agent1: {
-          password: "agent1",
-          role: "agent",
-          agentId: "agent1",
-          name: "Ion Popescu",
-        },
-        agent2: {
-          password: "agent2",
-          role: "agent",
-          agentId: "agent2",
-          name: "Maria Ionescu",
-        },
-      };
-
-      const user = users[credentials.username];
-      if (user && user.password === credentials.password) {
-        setCurrentUser({ username: credentials.username, ...user });
+    const handleLogin = async () => {
+      setError("");
+      setLoading(true);
+      
+      try {
+        const data = await authService.login(
+          credentials.username,
+          credentials.password,
+          API_URL
+        );
+        setCurrentUser(data.user);
         setActiveSection("dashboard");
-      } else {
-        showMessage("Date de autentificare invalide! ", "error");
+      } catch (err) {
+        setError(err.message || "Date de autentificare invalide!");
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -510,6 +470,12 @@ const App = () => {
           </div>
 
           <div className="space-y-4">
+            {error && (
+              <div className="p-3 bg-red-100 text-red-800 rounded-lg text-sm">
+                {error}
+              </div>
+            )}
+            
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Utilizator
@@ -520,8 +486,9 @@ const App = () => {
                 onChange={(e) =>
                   setCredentials({ ...credentials, username: e.target.value })
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus: ring-amber-500 focus: border-transparent"
-                placeholder="admin / birou / agent1"
+                disabled={loading}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent disabled:opacity-50"
+                placeholder="Username"
               />
             </div>
 
@@ -535,17 +502,19 @@ const App = () => {
                 onChange={(e) =>
                   setCredentials({ ...credentials, password: e.target.value })
                 }
-                onKeyPress={(e) => e.key === "Enter" && handleLogin()}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                onKeyPress={(e) => e.key === "Enter" && !loading && handleLogin()}
+                disabled={loading}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent disabled:opacity-50"
                 placeholder="••••••"
               />
             </div>
 
             <button
               onClick={handleLogin}
-              className="w-full bg-amber-600 text-white py-2 rounded-lg hover:bg-amber-700 transition-colors font-medium"
+              disabled={loading}
+              className="w-full bg-amber-600 text-white py-2 rounded-lg hover:bg-amber-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Autentificare
+              {loading ? "Se autentifică..." : "Autentificare"}
             </button>
           </div>
 
@@ -593,7 +562,10 @@ const App = () => {
           </div>
         </div>
         <button
-          onClick={() => setCurrentUser(null)}
+          onClick={() => {
+            authService.logout();
+            setCurrentUser(null);
+          }}
           className="hidden sm:flex items-center space-x-2 text-gray-600 hover:text-gray-800 transition-colors"
         >
           <LogOut className="w-5 h-5" />
@@ -601,7 +573,10 @@ const App = () => {
         </button>
         {/* Mobile Logout Button */}
         <button
-          onClick={() => setCurrentUser(null)}
+          onClick={() => {
+            authService.logout();
+            setCurrentUser(null);
+          }}
           className="sm:hidden p-2 hover:bg-gray-100 rounded-lg"
           aria-label="Logout"
         >
