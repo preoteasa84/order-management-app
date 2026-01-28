@@ -18,6 +18,9 @@ import {
 } from "lucide-react";
 
 const App = () => {
+  // API Configuration
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  
   // Auth state
   const [currentUser, setCurrentUser] = useState(null);
   const [activeSection, setActiveSection] = useState("dashboard");
@@ -63,24 +66,221 @@ const App = () => {
     new Date().toISOString().split("T")[0],
   );
 
-  // ✅ FIXED: Storage API - using localStorage instead of window.storage
+  // ✅ API-aware Storage - uses API for clients/products, localStorage for others
   const loadData = async (key) => {
     try {
-      const result = localStorage.getItem(key);
-      return result ? JSON.parse(result) : null;
+      // Use API for clients and products
+      if (key === 'clients') {
+        const response = await fetch(`${API_URL}/api/clients`);
+        if (response.ok) {
+          return await response.json();
+        }
+        console.warn('API not available for clients, using localStorage fallback');
+        const result = localStorage.getItem(key);
+        return result ? JSON.parse(result) : null;
+      } else if (key === 'products') {
+        const response = await fetch(`${API_URL}/api/products`);
+        if (response.ok) {
+          return await response.json();
+        }
+        console.warn('API not available for products, using localStorage fallback');
+        const result = localStorage.getItem(key);
+        return result ? JSON.parse(result) : null;
+      } else {
+        // Use localStorage for other data
+        const result = localStorage.getItem(key);
+        return result ? JSON.parse(result) : null;
+      }
     } catch (error) {
       console.error(`Error loading ${key}:`, error);
-      return null;
+      // Fallback to localStorage on error
+      try {
+        const result = localStorage.getItem(key);
+        return result ? JSON.parse(result) : null;
+      } catch {
+        return null;
+      }
     }
   };
 
   const saveData = async (key, data) => {
     try {
-      localStorage.setItem(key, JSON.stringify(data));
-      return true;
+      // Use API for clients and products
+      if (key === 'clients') {
+        // For clients, we need to handle both create and update operations
+        // Since we're replacing the entire array, we need to sync all clients
+        // This is not efficient but maintains compatibility with existing code
+        localStorage.setItem(key, JSON.stringify(data)); // Keep localStorage as fallback
+        return true;
+      } else if (key === 'products') {
+        // Same approach for products
+        localStorage.setItem(key, JSON.stringify(data)); // Keep localStorage as fallback
+        return true;
+      } else {
+        // Use localStorage for other data
+        localStorage.setItem(key, JSON.stringify(data));
+        return true;
+      }
     } catch (error) {
       console.error(`Error saving ${key}:`, error);
       return false;
+    }
+  };
+
+  // API helper functions for clients
+  const createClient = async (client) => {
+    try {
+      const response = await fetch(`${API_URL}/api/clients`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(client)
+      });
+      if (response.ok) {
+        return await response.json();
+      }
+      throw new Error('Failed to create client');
+    } catch (error) {
+      console.error('Error creating client:', error);
+      throw error;
+    }
+  };
+
+  const updateClient = async (id, client) => {
+    try {
+      const response = await fetch(`${API_URL}/api/clients/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(client)
+      });
+      if (response.ok) {
+        return await response.json();
+      }
+      throw new Error('Failed to update client');
+    } catch (error) {
+      console.error('Error updating client:', error);
+      throw error;
+    }
+  };
+
+  const deleteClient = async (id) => {
+    try {
+      const response = await fetch(`${API_URL}/api/clients/${id}`, {
+        method: 'DELETE'
+      });
+      if (response.ok) {
+        return await response.json();
+      }
+      throw new Error('Failed to delete client');
+    } catch (error) {
+      console.error('Error deleting client:', error);
+      throw error;
+    }
+  };
+
+  // API helper functions for products
+  const createProduct = async (product) => {
+    try {
+      const response = await fetch(`${API_URL}/api/products`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(product)
+      });
+      if (response.ok) {
+        return await response.json();
+      }
+      throw new Error('Failed to create product');
+    } catch (error) {
+      console.error('Error creating product:', error);
+      throw error;
+    }
+  };
+
+  const updateProduct = async (id, product) => {
+    try {
+      const response = await fetch(`${API_URL}/api/products/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(product)
+      });
+      if (response.ok) {
+        return await response.json();
+      }
+      throw new Error('Failed to update product');
+    } catch (error) {
+      console.error('Error updating product:', error);
+      throw error;
+    }
+  };
+
+  const deleteProduct = async (id) => {
+    try {
+      const response = await fetch(`${API_URL}/api/products/${id}`, {
+        method: 'DELETE'
+      });
+      if (response.ok) {
+        return await response.json();
+      }
+      throw new Error('Failed to delete product');
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      throw error;
+    }
+  };
+
+  // Bulk sync function for import/export
+  const syncClientsToAPI = async (clientsList) => {
+    try {
+      // Get current clients from API
+      const response = await fetch(`${API_URL}/api/clients`);
+      if (!response.ok) {
+        console.warn('API not available, skipping sync');
+        return;
+      }
+      const existingClients = await response.json();
+      const existingIds = new Set(existingClients.map(c => c.id));
+
+      // Sync each client
+      for (const client of clientsList) {
+        try {
+          if (existingIds.has(client.id)) {
+            await updateClient(client.id, client);
+          } else {
+            await createClient(client);
+          }
+        } catch (error) {
+          console.error(`Failed to sync client ${client.id}:`, error);
+        }
+      }
+    } catch (error) {
+      console.error('Error syncing clients:', error);
+    }
+  };
+
+  const syncProductsToAPI = async (productsList) => {
+    try {
+      // Get current products from API
+      const response = await fetch(`${API_URL}/api/products`);
+      if (!response.ok) {
+        console.warn('API not available, skipping sync');
+        return;
+      }
+      const existingProducts = await response.json();
+      const existingIds = new Set(existingProducts.map(p => p.id));
+
+      // Sync each product
+      for (const product of productsList) {
+        try {
+          if (existingIds.has(product.id)) {
+            await updateProduct(product.id, product);
+          } else {
+            await createProduct(product);
+          }
+        } catch (error) {
+          console.error(`Failed to sync product ${product.id}:`, error);
+        }
+      }
+    } catch (error) {
+      console.error('Error syncing products:', error);
     }
   };
 
@@ -2125,34 +2325,42 @@ const App = () => {
         return;
       }
 
-      const existingIndex = clients.findIndex(
-        (c) => c.id === localEditingClient.id,
-      );
-      let updatedClients;
+      try {
+        const existingIndex = clients.findIndex(
+          (c) => c.id === localEditingClient.id,
+        );
 
-      if (existingIndex >= 0) {
-        updatedClients = [...clients];
-        updatedClients[existingIndex] = localEditingClient;
-      } else {
-        updatedClients = [...clients, localEditingClient];
-      }
-
-      const success = await saveData("clients", updatedClients);
-      if (success) {
-        setClients(updatedClients);
+        if (existingIndex >= 0) {
+          // Update existing client
+          await updateClient(localEditingClient.id, localEditingClient);
+          const updatedClients = [...clients];
+          updatedClients[existingIndex] = localEditingClient;
+          setClients(updatedClients);
+        } else {
+          // Create new client
+          await createClient(localEditingClient);
+          setClients([...clients, localEditingClient]);
+        }
+        
         setEditingClient(null);
         setLocalEditingClient(null);
         showMessage("Client salvat cu succes!");
+      } catch (error) {
+        showMessage("Eroare la salvarea clientului!", "error");
+        console.error(error);
       }
     };
 
     const handleDeleteClient = async (clientId) => {
       if (confirm("Sigur doriți să ștergeți acest client?")) {
-        const updatedClients = clients.filter((c) => c.id !== clientId);
-        const success = await saveData("clients", updatedClients);
-        if (success) {
+        try {
+          await deleteClient(clientId);
+          const updatedClients = clients.filter((c) => c.id !== clientId);
           setClients(updatedClients);
           showMessage("Client șters cu succes!");
+        } catch (error) {
+          showMessage("Eroare la ștergerea clientului!", "error");
+          console.error(error);
         }
       }
     };
@@ -2564,34 +2772,42 @@ const App = () => {
         return;
       }
 
-      const existingIndex = products.findIndex(
-        (p) => p.id === localEditingProduct.id,
-      );
-      let updatedProducts;
+      try {
+        const existingIndex = products.findIndex(
+          (p) => p.id === localEditingProduct.id,
+        );
 
-      if (existingIndex >= 0) {
-        updatedProducts = [...products];
-        updatedProducts[existingIndex] = localEditingProduct;
-      } else {
-        updatedProducts = [...products, localEditingProduct];
-      }
+        if (existingIndex >= 0) {
+          // Update existing product
+          await updateProduct(localEditingProduct.id, localEditingProduct);
+          const updatedProducts = [...products];
+          updatedProducts[existingIndex] = localEditingProduct;
+          setProducts(updatedProducts);
+        } else {
+          // Create new product
+          await createProduct(localEditingProduct);
+          setProducts([...products, localEditingProduct]);
+        }
 
-      const success = await saveData("products", updatedProducts);
-      if (success) {
-        setProducts(updatedProducts);
         setEditingProduct(null);
         setLocalEditingProduct(null);
         showMessage("Produs salvat cu succes!");
+      } catch (error) {
+        showMessage("Eroare la salvarea produsului!", "error");
+        console.error(error);
       }
     };
 
     const handleDeleteProduct = async (productId) => {
       if (confirm("Sigur doriți să ștergeți acest produs?")) {
-        const updatedProducts = products.filter((p) => p.id !== productId);
-        const success = await saveData("products", updatedProducts);
-        if (success) {
+        try {
+          await deleteProduct(productId);
+          const updatedProducts = products.filter((p) => p.id !== productId);
           setProducts(updatedProducts);
           showMessage("Produs șters cu succes!");
+        } catch (error) {
+          showMessage("Eroare la ștergerea produsului!", "error");
+          console.error(error);
         }
       }
     };
@@ -3294,6 +3510,10 @@ const App = () => {
                           saveData("dayStatus", data.dayStatus || {}),
                         ]);
 
+                        // Sync clients and products to API
+                        await syncClientsToAPI(data.clients);
+                        await syncProductsToAPI(data.products);
+
                         // Reîncarcă
                         await loadAllData();
 
@@ -3422,6 +3642,16 @@ const App = () => {
       const successContracts = await saveData("contracts", updatedContracts);
       const successClients = await saveData("clients", updatedClients);
 
+      // Sync the updated client to API
+      const clientToUpdate = updatedClients.find(c => c.id === editingContract.clientId);
+      if (clientToUpdate) {
+        try {
+          await updateClient(clientToUpdate.id, clientToUpdate);
+        } catch (error) {
+          console.error('Error syncing client to API:', error);
+        }
+      }
+
       if (successContracts && successClients) {
         setContracts(updatedContracts);
         setClients(updatedClients); // ← ADAUGĂ ASTA!
@@ -3443,6 +3673,17 @@ const App = () => {
 
         const successContracts = await saveData("contracts", updatedContracts);
         const successClients = await saveData("clients", updatedClients);
+
+        // Sync the updated clients to API
+        for (const client of updatedClients) {
+          if (clients.find(c => c.id === client.id)?.contractId === contractId) {
+            try {
+              await updateClient(client.id, client);
+            } catch (error) {
+              console.error('Error syncing client to API:', error);
+            }
+          }
+        }
 
         if (successContracts && successClients) {
           setContracts(updatedContracts);
