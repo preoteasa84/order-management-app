@@ -738,21 +738,22 @@ const App = () => {
           </div>
         )}
 
-        {/* Mobile Bottom Tab Navigation for Agents */}
-        {currentUser.role === "agent" && (
-          <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40">
-            <div className="flex justify-around items-center h-16">
-              <button
-                onClick={() => handleNavClick("dashboard")}
-                className={`flex flex-col items-center justify-center flex-1 h-full ${
-                  activeSection === "dashboard"
-                    ? "text-amber-600"
-                    : "text-gray-600"
-                }`}
-              >
-                <Home className="w-6 h-6" />
-                <span className="text-xs mt-1">Dashboard</span>
-              </button>
+        {/* Mobile Bottom Tab Navigation for All Users */}
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40">
+          <div className="flex justify-around items-center h-16">
+            <button
+              onClick={() => handleNavClick("dashboard")}
+              className={`flex flex-col items-center justify-center flex-1 h-full ${
+                activeSection === "dashboard"
+                  ? "text-amber-600"
+                  : "text-gray-600"
+              }`}
+            >
+              <Home className="w-6 h-6" />
+              <span className="text-xs mt-1">Dashboard</span>
+            </button>
+            
+            {currentUser.role === "agent" && (
               <button
                 onClick={() => handleNavClick("orders-agent")}
                 className={`flex flex-col items-center justify-center flex-1 h-full ${
@@ -764,16 +765,31 @@ const App = () => {
                 <FileText className="w-6 h-6" />
                 <span className="text-xs mt-1">Comenzi</span>
               </button>
+            )}
+            
+            {(currentUser.role === "admin" || currentUser.role === "birou") && (
               <button
-                onClick={() => setMobileMenuOpen(true)}
-                className="flex flex-col items-center justify-center flex-1 h-full text-gray-600"
+                onClick={() => handleNavClick("orders-matrix")}
+                className={`flex flex-col items-center justify-center flex-1 h-full ${
+                  activeSection === "orders-matrix"
+                    ? "text-amber-600"
+                    : "text-gray-600"
+                }`}
               >
-                <Menu className="w-6 h-6" />
-                <span className="text-xs mt-1">Meniu</span>
+                <FileText className="w-6 h-6" />
+                <span className="text-xs mt-1">Comenzi</span>
               </button>
-            </div>
+            )}
+            
+            <button
+              onClick={() => setMobileMenuOpen(true)}
+              className="flex flex-col items-center justify-center flex-1 h-full text-gray-600"
+            >
+              <Menu className="w-6 h-6" />
+              <span className="text-xs mt-1">Meniu</span>
+            </button>
           </div>
-        )}
+        </div>
       </>
     );
   };
@@ -1262,7 +1278,7 @@ const App = () => {
           </div>
         )}
         <div className="bg-white rounded-lg shadow p-3 sm:p-4">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3">
             {products.map((product) => {
               const price = getClientProductPrice(selectedClient, product);
               const quantity = getQuantity(product.id);
@@ -4129,9 +4145,9 @@ const App = () => {
   return (
     <div className="min-h-screen bg-gray-100">
       <Header />
-      <div className="flex">
+      <div className="lg:flex">
         <Navigation />
-        <div className="flex-1 p-4 sm:p-6 pb-20 lg:pb-6">
+        <div className="w-full lg:flex-1 p-4 sm:p-6 pb-20 lg:pb-6">
           {message && (
             <div
               className={`mb-4 p-4 rounded-lg ${
