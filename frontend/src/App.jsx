@@ -50,6 +50,16 @@ const App = () => {
     }
   }, []);
 
+  // Monitor authentication changes (e.g., when 401 triggers logout)
+  useEffect(() => {
+    const checkAuth = setInterval(() => {
+      if (currentUser && !authService.isAuthenticated()) {
+        setCurrentUser(null);
+      }
+    }, 1000);
+    return () => clearInterval(checkAuth);
+  }, [currentUser]);
+
   // Load data when authenticated
   useEffect(() => {
     if (currentUser) {
@@ -96,7 +106,11 @@ const App = () => {
       }
     } catch (error) {
       console.error(`Error loading ${key}:`, error);
-      // Fallback to localStorage on error
+      // For clients/products, don't fallback to localStorage - let it fail
+      if (key === 'clients' || key === 'products') {
+        return null;
+      }
+      // For other data, try localStorage
       try {
         const result = localStorage.getItem(key);
         return result ? JSON.parse(result) : null;
@@ -254,11 +268,6 @@ const App = () => {
       console.error('Error syncing products:', error);
     }
   };
-
-  // Load data on mount
-  useEffect(() => {
-    loadAllData();
-  }, []);
 
   const loadAllData = async () => {
     try {
@@ -516,13 +525,6 @@ const App = () => {
             >
               {loading ? "Se autentifică..." : "Autentificare"}
             </button>
-          </div>
-
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg text-sm text-gray-600">
-            <p className="font-semibold mb-2">Conturi demo:</p>
-            <p>• admin / admin</p>
-            <p>• birou / birou</p>
-            <p>• agent1 / agent1</p>
           </div>
         </div>
       </div>

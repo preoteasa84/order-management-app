@@ -106,7 +106,6 @@ export const apiRequest = async (url, options = {}) => {
   // Handle 401 Unauthorized
   if (response.status === 401) {
     authService.logout();
-    window.location.reload(); // Force reload to show login
     throw new Error('Session expired. Please login again.');
   }
 
