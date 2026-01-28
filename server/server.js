@@ -29,8 +29,8 @@ app.get('/api/health', (req, res) => {
     res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
-// Get all orders
-app.get('/api/orders', (req, res) => {
+// Get all orders (authenticated)
+app.get('/api/orders', verifyToken, (req, res) => {
     db.all('SELECT * FROM orders ORDER BY createdAt DESC', [], (err, rows) => {
         if (err) {
             res.status(500).json({ error: err.message });
@@ -40,8 +40,8 @@ app.get('/api/orders', (req, res) => {
     });
 });
 
-// Create order
-app.post('/api/orders', (req, res) => {
+// Create order (authenticated)
+app.post('/api/orders', verifyToken, (req, res) => {
     const { title, description } = req.body;
     if (!title) {
         return res.status(400).json({ error: 'Title is required' });
@@ -66,8 +66,8 @@ app.post('/api/orders', (req, res) => {
     );
 });
 
-// Update order
-app.put('/api/orders/:id', (req, res) => {
+// Update order (authenticated)
+app.put('/api/orders/:id', verifyToken, (req, res) => {
     const { status } = req.body;
     if (!status) {
         return res.status(400).json({ error: 'Status is required' });
@@ -88,8 +88,8 @@ app.put('/api/orders/:id', (req, res) => {
     );
 });
 
-// Delete order
-app.delete('/api/orders/:id', (req, res) => {
+// Delete order (authenticated)
+app.delete('/api/orders/:id', verifyToken, (req, res) => {
     db.run('DELETE FROM orders WHERE id = ?', [req.params.id], function(err) {
         if (err) {
             res.status(500).json({ error: err.message });
@@ -103,8 +103,8 @@ app.delete('/api/orders/:id', (req, res) => {
 
 // ============ CLIENTS ENDPOINTS ============
 
-// Get all clients
-app.get('/api/clients', (req, res) => {
+// Get all clients (authenticated)
+app.get('/api/clients', verifyToken, (req, res) => {
     db.all('SELECT * FROM clients ORDER BY nume', [], (err, rows) => {
         if (err) {
             res.status(500).json({ error: err.message });
@@ -120,8 +120,8 @@ app.get('/api/clients', (req, res) => {
     });
 });
 
-// Get single client
-app.get('/api/clients/:id', (req, res) => {
+// Get single client (authenticated)
+app.get('/api/clients/:id', verifyToken, (req, res) => {
     db.get('SELECT * FROM clients WHERE id = ?', [req.params.id], (err, row) => {
         if (err) {
             res.status(500).json({ error: err.message });
@@ -138,8 +138,8 @@ app.get('/api/clients/:id', (req, res) => {
     });
 });
 
-// Create client
-app.post('/api/clients', (req, res) => {
+// Create client (authenticated)
+app.post('/api/clients', verifyToken, (req, res) => {
     const client = req.body;
     
     if (!client.id || !client.nume) {
@@ -169,8 +169,8 @@ app.post('/api/clients', (req, res) => {
     );
 });
 
-// Update client
-app.put('/api/clients/:id', (req, res) => {
+// Update client (authenticated)
+app.put('/api/clients/:id', verifyToken, (req, res) => {
     const client = req.body;
     
     if (!client.nume) {
@@ -203,8 +203,8 @@ app.put('/api/clients/:id', (req, res) => {
     );
 });
 
-// Delete client
-app.delete('/api/clients/:id', (req, res) => {
+// Delete client (authenticated)
+app.delete('/api/clients/:id', verifyToken, (req, res) => {
     db.run('DELETE FROM clients WHERE id = ?', [req.params.id], function(err) {
         if (err) {
             res.status(500).json({ error: err.message });
@@ -218,8 +218,8 @@ app.delete('/api/clients/:id', (req, res) => {
 
 // ============ PRODUCTS ENDPOINTS ============
 
-// Get all products
-app.get('/api/products', (req, res) => {
+// Get all products (authenticated)
+app.get('/api/products', verifyToken, (req, res) => {
     db.all('SELECT * FROM products ORDER BY descriere', [], (err, rows) => {
         if (err) {
             res.status(500).json({ error: err.message });
@@ -234,8 +234,8 @@ app.get('/api/products', (req, res) => {
     });
 });
 
-// Get single product
-app.get('/api/products/:id', (req, res) => {
+// Get single product (authenticated)
+app.get('/api/products/:id', verifyToken, (req, res) => {
     db.get('SELECT * FROM products WHERE id = ?', [req.params.id], (err, row) => {
         if (err) {
             res.status(500).json({ error: err.message });
@@ -251,8 +251,8 @@ app.get('/api/products/:id', (req, res) => {
     });
 });
 
-// Create product
-app.post('/api/products', (req, res) => {
+// Create product (authenticated)
+app.post('/api/products', verifyToken, (req, res) => {
     const product = req.body;
     
     if (!product.id || !product.descriere) {
@@ -279,8 +279,8 @@ app.post('/api/products', (req, res) => {
     );
 });
 
-// Update product
-app.put('/api/products/:id', (req, res) => {
+// Update product (authenticated)
+app.put('/api/products/:id', verifyToken, (req, res) => {
     const product = req.body;
     
     if (!product.descriere) {
@@ -310,8 +310,8 @@ app.put('/api/products/:id', (req, res) => {
     );
 });
 
-// Delete product
-app.delete('/api/products/:id', (req, res) => {
+// Delete product (authenticated)
+app.delete('/api/products/:id', verifyToken, (req, res) => {
     db.run('DELETE FROM products WHERE id = ?', [req.params.id], function(err) {
         if (err) {
             res.status(500).json({ error: err.message });
