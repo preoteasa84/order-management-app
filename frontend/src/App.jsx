@@ -15,6 +15,10 @@ import {
   X,
   Save,
   Calendar,
+  Menu,
+  Home,
+  MinusCircle,
+  PlusCircle,
 } from "lucide-react";
 
 const App = () => {
@@ -24,6 +28,7 @@ const App = () => {
   // Auth state
   const [currentUser, setCurrentUser] = useState(null);
   const [activeSection, setActiveSection] = useState("dashboard");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Data states
   const [company, setCompany] = useState(null);
@@ -557,17 +562,26 @@ const App = () => {
 
   // Header component
   const Header = () => (
-    <div className="bg-white border-b border-gray-200 px-6 py-4">
+    <div className="bg-white border-b border-gray-200 px-4 sm:px-6 py-3 sm:py-4">
       <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
-            <span className="text-2xl">🥖</span>
+        <div className="flex items-center space-x-2 sm:space-x-3">
+          {/* Hamburger Menu for Mobile */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="lg:hidden p-2 hover:bg-gray-100 rounded-lg"
+            aria-label="Toggle menu"
+          >
+            <Menu className="w-6 h-6 text-gray-600" />
+          </button>
+          
+          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-amber-100 rounded-full flex items-center justify-center">
+            <span className="text-xl sm:text-2xl">🥖</span>
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-800">
+            <h1 className="text-base sm:text-xl font-bold text-gray-800">
               Sistem Comenzi Panificație
             </h1>
-            <p className="text-sm text-gray-600">
+            <p className="text-xs sm:text-sm text-gray-600">
               {currentUser.name} (
               {currentUser.role === "admin"
                 ? "Administrator"
@@ -580,10 +594,18 @@ const App = () => {
         </div>
         <button
           onClick={() => setCurrentUser(null)}
-          className="flex items-center space-x-2 text-gray-600 hover:text-gray-800 transition-colors"
+          className="hidden sm:flex items-center space-x-2 text-gray-600 hover:text-gray-800 transition-colors"
         >
           <LogOut className="w-5 h-5" />
           <span>Ieșire</span>
+        </button>
+        {/* Mobile Logout Button */}
+        <button
+          onClick={() => setCurrentUser(null)}
+          className="sm:hidden p-2 hover:bg-gray-100 rounded-lg"
+          aria-label="Logout"
+        >
+          <LogOut className="w-5 h-5 text-gray-600" />
         </button>
       </div>
     </div>
@@ -643,30 +665,116 @@ const App = () => {
       },
     ];
 
+    const handleNavClick = (itemId) => {
+      setActiveSection(itemId);
+      setMobileMenuOpen(false); // Close mobile menu on navigation
+    };
+
     return (
-      <div className="bg-gray-800 text-white w-64 min-h-screen p-4">
-        <nav className="space-y-2">
-          {menuItems
-            .filter((item) => item.roles.includes(currentUser.role))
-            .map((item) => {
-              const Icon = item.icon;
-              return (
+      <>
+        {/* Desktop Sidebar */}
+        <div className="hidden lg:block bg-gray-800 text-white w-64 min-h-screen p-4">
+          <nav className="space-y-2">
+            {menuItems
+              .filter((item) => item.roles.includes(currentUser.role))
+              .map((item) => {
+                const Icon = item.icon;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => handleNavClick(item.id)}
+                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
+                      activeSection === item.id
+                        ? "bg-amber-600 text-white"
+                        : "text-gray-300 hover:bg-gray-700"
+                    }`}
+                  >
+                    <Icon className="w-5 h-5" />
+                    <span>{item.label}</span>
+                  </button>
+                );
+              })}
+          </nav>
+        </div>
+
+        {/* Mobile Menu Overlay */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden fixed inset-0 z-50 bg-black bg-opacity-50" onClick={() => setMobileMenuOpen(false)}>
+            <div 
+              className="bg-gray-800 text-white w-64 min-h-screen p-4 shadow-xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-lg font-semibold">Menu</h2>
                 <button
-                  key={item.id}
-                  onClick={() => setActiveSection(item.id)}
-                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
-                    activeSection === item.id
-                      ? "bg-amber-600 text-white"
-                      : "text-gray-300 hover:bg-gray-700"
-                  }`}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-2 hover:bg-gray-700 rounded-lg"
                 >
-                  <Icon className="w-5 h-5" />
-                  <span>{item.label}</span>
+                  <X className="w-5 h-5" />
                 </button>
-              );
-            })}
-        </nav>
-      </div>
+              </div>
+              <nav className="space-y-2">
+                {menuItems
+                  .filter((item) => item.roles.includes(currentUser.role))
+                  .map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={() => handleNavClick(item.id)}
+                        className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
+                          activeSection === item.id
+                            ? "bg-amber-600 text-white"
+                            : "text-gray-300 hover:bg-gray-700"
+                        }`}
+                      >
+                        <Icon className="w-5 h-5" />
+                        <span>{item.label}</span>
+                      </button>
+                    );
+                  })}
+              </nav>
+            </div>
+          </div>
+        )}
+
+        {/* Mobile Bottom Tab Navigation for Agents */}
+        {currentUser.role === "agent" && (
+          <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40">
+            <div className="flex justify-around items-center h-16">
+              <button
+                onClick={() => handleNavClick("dashboard")}
+                className={`flex flex-col items-center justify-center flex-1 h-full ${
+                  activeSection === "dashboard"
+                    ? "text-amber-600"
+                    : "text-gray-600"
+                }`}
+              >
+                <Home className="w-6 h-6" />
+                <span className="text-xs mt-1">Dashboard</span>
+              </button>
+              <button
+                onClick={() => handleNavClick("orders-agent")}
+                className={`flex flex-col items-center justify-center flex-1 h-full ${
+                  activeSection === "orders-agent"
+                    ? "text-amber-600"
+                    : "text-gray-600"
+                }`}
+              >
+                <FileText className="w-6 h-6" />
+                <span className="text-xs mt-1">Comenzi</span>
+              </button>
+              <button
+                onClick={() => setMobileMenuOpen(true)}
+                className="flex flex-col items-center justify-center flex-1 h-full text-gray-600"
+              >
+                <Menu className="w-6 h-6" />
+                <span className="text-xs mt-1">Meniu</span>
+              </button>
+            </div>
+          </div>
+        )}
+      </>
     );
   };
 
@@ -688,85 +796,88 @@ const App = () => {
     };
 
     return (
-      <div className="space-y-6">
-        <h2 className="text-2xl font-bold text-gray-800">Dashboard</h2>
+      <div className="space-y-4 sm:space-y-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-800">Dashboard</h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-white p-6 rounded-lg shadow">
+        {/* Stats Cards - Mobile Optimized */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <div className="bg-white p-4 sm:p-6 rounded-lg shadow">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm">Comenzi astăzi</p>
-                <p className="text-3xl font-bold text-gray-800">
+                <p className="text-gray-600 text-xs sm:text-sm mb-1">Comenzi astăzi</p>
+                <p className="text-3xl sm:text-4xl font-bold text-gray-800">
                   {stats.totalOrders}
                 </p>
               </div>
-              <FileText className="w-12 h-12 text-blue-500" />
+              <FileText className="w-10 h-10 sm:w-12 sm:h-12 text-blue-500" />
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow">
+          <div className="bg-white p-4 sm:p-6 rounded-lg shadow">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm">Valoare totală</p>
-                <p className="text-3xl font-bold text-gray-800">
-                  {stats.totalValue.toFixed(2)} RON
+                <p className="text-gray-600 text-xs sm:text-sm mb-1">Valoare totală</p>
+                <p className="text-2xl sm:text-3xl font-bold text-gray-800">
+                  {stats.totalValue.toFixed(2)}
                 </p>
+                <p className="text-xs text-gray-500">RON</p>
               </div>
-              
+              <DollarSign className="w-10 h-10 sm:w-12 sm:h-12 text-green-500" />
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow">
+          <div className="bg-white p-4 sm:p-6 rounded-lg shadow">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm">Plată la zi</p>
-                <p className="text-3xl font-bold text-gray-800">
+                <p className="text-gray-600 text-xs sm:text-sm mb-1">Plată la zi</p>
+                <p className="text-3xl sm:text-4xl font-bold text-gray-800">
                   {stats.immediatePayment}
                 </p>
               </div>
-              <Check className="w-12 h-12 text-amber-500" />
+              <Check className="w-10 h-10 sm:w-12 sm:h-12 text-amber-500" />
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow">
+          <div className="bg-white p-4 sm:p-6 rounded-lg shadow">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm">Cu termen</p>
-                <p className="text-3xl font-bold text-gray-800">
+                <p className="text-gray-600 text-xs sm:text-sm mb-1">Cu termen</p>
+                <p className="text-3xl sm:text-4xl font-bold text-gray-800">
                   {stats.creditPayment}
                 </p>
               </div>
-              <FileText className="w-12 h-12 text-orange-500" />
+              <FileText className="w-10 h-10 sm:w-12 sm:h-12 text-orange-500" />
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-semibold mb-4">Comenzi recente</h3>
+        {/* Recent Orders - Mobile Optimized */}
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow">
+          <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Comenzi recente</h3>
           {todayOrders.length === 0 ? (
-            <p className="text-gray-500">Nu există comenzi astăzi</p>
+            <p className="text-gray-500 text-sm">Nu există comenzi astăzi</p>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-2 sm:space-y-3">
               {todayOrders.slice(0, 5).map((order) => {
                 const client = clients.find((c) => c.id === order.clientId);
                 return (
                   <div
                     key={order.id}
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded"
+                    className="flex items-center justify-between p-3 sm:p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                   >
-                    <div>
-                      <p className="font-medium">
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-sm sm:text-base truncate">
                         {client?.nume || "Client necunoscut"}
                       </p>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-xs sm:text-sm text-gray-600 mt-0.5">
                         {order.items?.length || 0} produse
                       </p>
                     </div>
-                    <div className="text-right">
-                      <p className="font-semibold">
+                    <div className="text-right ml-4">
+                      <p className="font-semibold text-sm sm:text-base whitespace-nowrap">
                         {(order.totalWithVAT || 0).toFixed(2)} RON
                       </p>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-xs sm:text-sm text-gray-600 mt-0.5">
                         {order.paymentType === "immediate"
                           ? "💰 Plată la zi"
                           : "📄 Cu termen"}
@@ -972,24 +1083,24 @@ const App = () => {
     if (!selectedClient) {
       return (
         <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-800">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+            <div className="flex items-center gap-3 sm:gap-4">
+              <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-800">
                 Comenzi - {currentUser.name}
               </h2>
               {isDayClosed && (
-                <span className="px-3 py-1 bg-red-100 text-red-800 rounded-full text-xs sm:text-sm font-semibold">
+                <span className="px-2 sm:px-3 py-1 bg-red-100 text-red-800 rounded-full text-xs sm:text-sm font-semibold whitespace-nowrap">
                   🔒 ZI ÎNCHISĂ
                 </span>
               )}
             </div>
             <div className="flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-gray-600" />
+              <Calendar className="w-5 h-5 text-gray-600 flex-shrink-0" />
               <input
                 type="date"
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg text-sm sm:text-base"
+                className="flex-1 sm:flex-none px-3 py-2.5 border-2 border-gray-300 rounded-lg text-sm sm:text-base min-h-[44px] focus:border-amber-500 focus:outline-none"
               />
             </div>
           </div>
@@ -1006,8 +1117,8 @@ const App = () => {
             </div>
           )}
 
-          <div className="bg-white rounded-lg shadow p-4">
-            <h3 className="text-lg font-semibold mb-4">Selectați Client</h3>
+          <div className="bg-white rounded-lg shadow p-3 sm:p-4">
+            <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Selectați Client</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {agentClients.map((client) => {
                 const clientOrder = orders.find(
@@ -1018,18 +1129,18 @@ const App = () => {
                     key={client.id}
                     onClick={() => setSelectedClient(client)}
                     disabled={isDayClosed}
-                    className={`p-4 border-2 rounded-lg text-left transition-all ${
+                    className={`p-4 border-2 rounded-lg text-left transition-all min-h-[80px] ${
                       clientOrder
                         ? "border-green-500 bg-green-50 hover:bg-green-100"
                         : "border-gray-200 hover:border-amber-500 hover:bg-amber-50"
                     } ${isDayClosed ? "opacity-50 cursor-not-allowed" : ""}`}
                   >
                     <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <p className="font-semibold text-sm sm:text-base">
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-sm sm:text-base truncate">
                           {client.nume}
                         </p>
-                        <p className="text-xs text-gray-600 mt-1">
+                        <p className="text-xs text-gray-600 mt-1 truncate">
                           {
                             priceZones.find((z) => z.id === client.priceZone)
                               ?.name
@@ -1037,7 +1148,7 @@ const App = () => {
                         </p>
                       </div>
                       {clientOrder && (
-                        <span className="text-green-600 text-lg">✓</span>
+                        <span className="text-green-600 text-xl ml-2 flex-shrink-0">✓</span>
                       )}
                     </div>
                     {clientOrder && (
@@ -1059,58 +1170,64 @@ const App = () => {
     const { isExported, isDisabled } = getOrderStatus();
     return (
       <div className="space-y-4 sm:space-y-6">
-        <div className="flex flex-col sm:flex-row sm: items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
           <div className="flex items-center gap-3">
             <button
               onClick={handleBack}
-              className="p-2 hover:bg-gray-100 rounded-lg"
+              className="p-2 hover:bg-gray-100 rounded-lg min-w-[44px] min-h-[44px] flex items-center justify-center"
             >
               ← Înapoi
             </button>
             <div className="flex items-center gap-2">
-              <h2 className="text-lg sm:text-xl font-bold text-gray-800">
+              <h2 className="text-base sm:text-lg md:text-xl font-bold text-gray-800">
                 {selectedClient.nume}
               </h2>
               {isExported && (
-                <span className="text-green-600 font-semibold text-sm">
+                <span className="text-green-600 font-semibold text-xs sm:text-sm">
                   ✓ Exportat
                 </span>
               )}
               {isDayClosed && !isExported && (
-                <span className="text-red-600 font-semibold text-sm">
+                <span className="text-red-600 font-semibold text-xs sm:text-sm">
                   🔒 Închis
                 </span>
               )}
             </div>
           </div>
-          <div className="flex flex-col sm:flex-row gap-2">
-            <div className="flex items-center gap-2 text-sm">
-              <label className="flex items-center gap-2">
-                <input
-                  type="radio"
-                  checked={currentOrder.paymentType === "immediate"}
-                  onChange={() =>
-                    setCurrentOrder({
-                      ...currentOrder,
-                      paymentType: "immediate",
-                      dueDate: null,
-                    })
-                  }
-                  disabled={isDisabled}
-                />
+          
+          {/* Payment Type Selection - Mobile Optimized */}
+          <div className="flex flex-col gap-2 w-full sm:w-auto">
+            <div className="flex gap-2">
+              <button
+                onClick={() =>
+                  setCurrentOrder({
+                    ...currentOrder,
+                    paymentType: "immediate",
+                    dueDate: null,
+                  })
+                }
+                disabled={isDisabled}
+                className={`flex-1 sm:flex-none px-4 py-2.5 rounded-lg text-sm font-medium transition-all min-h-[44px] ${
+                  currentOrder.paymentType === "immediate"
+                    ? "bg-amber-600 text-white"
+                    : "bg-white border-2 border-gray-300 text-gray-700 hover:border-amber-500"
+                } ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
+              >
                 💰 Plată la zi
-              </label>
-              <label className="flex items-center gap-2">
-                <input
-                  type="radio"
-                  checked={currentOrder.paymentType === "credit"}
-                  onChange={() =>
-                    setCurrentOrder({ ...currentOrder, paymentType: "credit" })
-                  }
-                  disabled={isDisabled}
-                />
+              </button>
+              <button
+                onClick={() =>
+                  setCurrentOrder({ ...currentOrder, paymentType: "credit" })
+                }
+                disabled={isDisabled}
+                className={`flex-1 sm:flex-none px-4 py-2.5 rounded-lg text-sm font-medium transition-all min-h-[44px] ${
+                  currentOrder.paymentType === "credit"
+                    ? "bg-amber-600 text-white"
+                    : "bg-white border-2 border-gray-300 text-gray-700 hover:border-amber-500"
+                } ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
+              >
                 📄 Cu termen
-              </label>
+              </button>
             </div>
             {currentOrder.paymentType === "credit" && (
               <input
@@ -1120,7 +1237,7 @@ const App = () => {
                   setCurrentOrder({ ...currentOrder, dueDate: e.target.value })
                 }
                 disabled={isDisabled}
-                className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                className="w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg text-sm min-h-[44px]"
               />
             )}
           </div>
@@ -1144,8 +1261,8 @@ const App = () => {
             </p>
           </div>
         )}
-        <div className="bg-white rounded-lg shadow p-4">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+        <div className="bg-white rounded-lg shadow p-3 sm:p-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
             {products.map((product) => {
               const price = getClientProductPrice(selectedClient, product);
               const quantity = getQuantity(product.id);
@@ -1153,53 +1270,76 @@ const App = () => {
               return (
                 <div
                   key={product.id}
-                  className={`border-2 rounded-lg p-3 ${
+                  className={`border-2 rounded-lg p-3 transition-all ${
                     quantity > 0
                       ? "border-amber-500 bg-amber-50"
                       : "border-gray-200"
                   }`}
                 >
-                  <p className="text-xs sm:text-sm font-medium text-gray-800 mb-1 line-clamp-2">
+                  <p className="text-xs sm:text-sm font-medium text-gray-800 mb-1 line-clamp-2 min-h-[32px]">
                     {product.descriere}
                   </p>
-                  <p className="text-xs text-gray-600 mb-2">
+                  <p className="text-xs text-gray-600 mb-2 font-semibold">
                     {price?.toFixed(2)} RON
                   </p>
-                  <input
-                    type="number"
-                    min="0"
-                    value={quantity || ""}
-                    onChange={(e) =>
-                      updateQuantity(product.id, parseInt(e.target.value) || 0)
-                    }
-                    disabled={isDayClosed}
-                    className="w-full px-2 py-2 border border-gray-300 rounded text-center text-sm disabled:bg-gray-100"
-                    placeholder="0"
-                  />
+                  
+                  {/* Mobile-Optimized Quantity Controls */}
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => updateQuantity(product.id, Math.max(0, quantity - 1))}
+                      disabled={isDisabled || quantity === 0}
+                      className="flex-shrink-0 w-10 h-10 flex items-center justify-center bg-gray-200 hover:bg-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      aria-label="Decrease quantity"
+                    >
+                      <MinusCircle className="w-5 h-5 text-gray-700" />
+                    </button>
+                    
+                    <input
+                      type="number"
+                      min="0"
+                      value={quantity || ""}
+                      onChange={(e) =>
+                        updateQuantity(product.id, parseInt(e.target.value) || 0)
+                      }
+                      disabled={isDisabled}
+                      className="flex-1 min-w-0 px-2 py-2 border-2 border-gray-300 rounded-lg text-center text-sm font-semibold disabled:bg-gray-100 focus:border-amber-500 focus:outline-none"
+                      placeholder="0"
+                    />
+                    
+                    <button
+                      onClick={() => updateQuantity(product.id, quantity + 1)}
+                      disabled={isDisabled}
+                      className="flex-shrink-0 w-10 h-10 flex items-center justify-center bg-amber-500 hover:bg-amber-600 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      aria-label="Increase quantity"
+                    >
+                      <PlusCircle className="w-5 h-5 text-white" />
+                    </button>
+                  </div>
                 </div>
               );
             })}
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div>
-              <p className="text-sm text-gray-600">Total Comandă</p>
+        {/* Sticky Bottom Action Bar - Mobile Optimized */}
+        <div className="fixed lg:static bottom-0 left-0 right-0 bg-white border-t lg:border-t-0 lg:rounded-lg shadow-lg lg:shadow p-4 z-30">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 max-w-full">
+            <div className="w-full sm:w-auto">
+              <p className="text-xs sm:text-sm text-gray-600">Total Comandă</p>
               <p className="text-2xl sm:text-3xl font-bold text-amber-600">
                 {calculateTotal().toFixed(2)} RON
               </p>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-500 mt-0.5">
                 {currentOrder.items.length} produse în comandă
               </p>
             </div>
             <button
               onClick={handleSaveOrder}
               disabled={isDisabled || currentOrder.items.length === 0}
-              className={`w-full sm:w-auto px-6 py-3 rounded-lg flex items-center justify-center gap-2 ${
+              className={`w-full sm:w-auto px-6 py-3.5 rounded-lg flex items-center justify-center gap-2 font-semibold text-base min-h-[52px] transition-all ${
                 isDisabled || currentOrder.items.length === 0
                   ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  : "bg-amber-600 text-white hover:bg-amber-700"
+                  : "bg-amber-600 text-white hover:bg-amber-700 active:bg-amber-800"
               }`}
             >
               <Save className="w-5 h-5" />
@@ -1207,6 +1347,9 @@ const App = () => {
             </button>
           </div>
         </div>
+        
+        {/* Spacer for mobile sticky button */}
+        <div className="h-24 lg:hidden"></div>
       </div>
     );
   };
@@ -3988,7 +4131,7 @@ const App = () => {
       <Header />
       <div className="flex">
         <Navigation />
-        <div className="flex-1 p-6">
+        <div className="flex-1 p-4 sm:p-6 pb-20 lg:pb-6">
           {message && (
             <div
               className={`mb-4 p-4 rounded-lg ${
