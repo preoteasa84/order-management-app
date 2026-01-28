@@ -739,7 +739,7 @@ const App = () => {
         )}
 
         {/* Mobile Bottom Tab Navigation for All Users */}
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40">
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
           <div className="flex justify-around items-center h-16">
             <button
               onClick={() => handleNavClick("dashboard")}
@@ -1338,7 +1338,7 @@ const App = () => {
         </div>
 
         {/* Sticky Bottom Action Bar - Mobile Optimized */}
-        <div className="fixed lg:static bottom-0 left-0 right-0 bg-white border-t lg:border-t-0 lg:rounded-lg shadow-lg lg:shadow p-4 z-30">
+        <div className="fixed lg:static bottom-16 left-0 right-0 bg-white border-t lg:border-t-0 lg:rounded-lg shadow-lg lg:shadow p-4 z-40">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 max-w-full">
             <div className="w-full sm:w-auto">
               <p className="text-xs sm:text-sm text-gray-600">Total Comandă</p>
@@ -4147,7 +4147,7 @@ const App = () => {
       <Header />
       <div className="lg:flex">
         <Navigation />
-        <div className="w-full lg:flex-1 p-4 sm:p-6 pb-20 lg:pb-6">
+        <div className="w-full lg:flex-1 p-4 sm:p-6 pb-32 lg:pb-6 overflow-y-auto max-h-[calc(100vh-120px)]">
           {message && (
             <div
               className={`mb-4 p-4 rounded-lg ${
