@@ -299,6 +299,183 @@ const App = () => {
     }
   };
 
+  const syncUsersToAPI = async (usersList) => {
+    try {
+      // Get current users from API
+      const response = await fetch(`${API_URL}/api/users`);
+      if (!response.ok) {
+        console.warn('API not available, skipping sync');
+        return;
+      }
+      const existingUsers = await response.json();
+      const existingIds = new Set(existingUsers.map(u => u.id));
+
+      // Sync each user
+      for (const user of usersList) {
+        try {
+          if (existingIds.has(user.id)) {
+            // Update existing user
+            const response = await fetch(`${API_URL}/api/users/${user.id}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(user)
+            });
+            if (!response.ok) {
+              throw new Error('Failed to update user');
+            }
+          } else {
+            // Create new user
+            const response = await fetch(`${API_URL}/api/users`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(user)
+            });
+            if (!response.ok) {
+              throw new Error('Failed to create user');
+            }
+          }
+        } catch (error) {
+          console.error(`Failed to sync user ${user.id}:`, error);
+        }
+      }
+    } catch (error) {
+      console.error('Error syncing users:', error);
+    }
+  };
+
+  const syncAgentsToAPI = async (agentsList) => {
+    try {
+      // Get current agents from API
+      const response = await fetch(`${API_URL}/api/agents`);
+      if (!response.ok) {
+        console.warn('API not available, skipping sync');
+        return;
+      }
+      const data = await response.json();
+      const existingAgents = data.success ? data.data : [];
+      const existingIds = new Set(existingAgents.map(a => a.id));
+
+      // Sync each agent
+      for (const agent of agentsList) {
+        try {
+          if (existingIds.has(agent.id)) {
+            // Update existing agent
+            const response = await fetch(`${API_URL}/api/agents/${agent.id}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(agent)
+            });
+            if (!response.ok) {
+              throw new Error('Failed to update agent');
+            }
+          } else {
+            // Create new agent
+            const response = await fetch(`${API_URL}/api/agents`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(agent)
+            });
+            if (!response.ok) {
+              throw new Error('Failed to create agent');
+            }
+          }
+        } catch (error) {
+          console.error(`Failed to sync agent ${agent.id}:`, error);
+        }
+      }
+    } catch (error) {
+      console.error('Error syncing agents:', error);
+    }
+  };
+
+  const syncOrdersToAPI = async (ordersList) => {
+    try {
+      // Get current orders from API
+      const response = await fetch(`${API_URL}/api/orders`);
+      if (!response.ok) {
+        console.warn('API not available, skipping sync');
+        return;
+      }
+      const existingOrders = await response.json();
+      const existingIds = new Set(existingOrders.map(o => o.id));
+
+      // Sync each order
+      for (const order of ordersList) {
+        try {
+          if (existingIds.has(order.id)) {
+            // Update existing order
+            const response = await fetch(`${API_URL}/api/orders/${order.id}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(order)
+            });
+            if (!response.ok) {
+              throw new Error('Failed to update order');
+            }
+          } else {
+            // Create new order
+            const response = await fetch(`${API_URL}/api/orders`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(order)
+            });
+            if (!response.ok) {
+              throw new Error('Failed to create order');
+            }
+          }
+        } catch (error) {
+          console.error(`Failed to sync order ${order.id}:`, error);
+        }
+      }
+    } catch (error) {
+      console.error('Error syncing orders:', error);
+    }
+  };
+
+  const syncZonesToAPI = async (zonesList) => {
+    try {
+      // Get current zones from API
+      const response = await fetch(`${API_URL}/api/zones`);
+      if (!response.ok) {
+        console.warn('API not available, skipping sync');
+        return;
+      }
+      const existingZones = await response.json();
+      const existingIds = new Set(existingZones.map(z => z.id));
+
+      // Sync each zone
+      for (const zone of zonesList) {
+        try {
+          if (existingIds.has(zone.id)) {
+            // Update existing zone
+            const response = await fetch(`${API_URL}/api/zones/${zone.id}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(zone)
+            });
+            if (!response.ok) {
+              throw new Error('Failed to update zone');
+            }
+          } else {
+            // Create new zone
+            const response = await fetch(`${API_URL}/api/zones`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(zone)
+            });
+            if (!response.ok) {
+              throw new Error('Failed to create zone');
+            }
+          }
+        } catch (error) {
+          console.error(`Failed to sync zone ${zone.id}:`, error);
+        }
+      }
+    } catch (error) {
+      console.error('Error syncing zones:', error);
+    }
+  };
+
   // Load data on mount
   useEffect(() => {
     loadAllData();
@@ -653,11 +830,16 @@ const App = () => {
             orders={orders}
             dayStatus={dayStatus}
             currentUser={currentUser}
+            users={users}
             showMessage={showMessage}
             saveData={saveData}
             loadAllData={loadAllData}
             syncClientsToAPI={syncClientsToAPI}
             syncProductsToAPI={syncProductsToAPI}
+            syncUsersToAPI={syncUsersToAPI}
+            syncAgentsToAPI={syncAgentsToAPI}
+            syncOrdersToAPI={syncOrdersToAPI}
+            syncZonesToAPI={syncZonesToAPI}
             API_URL={API_URL}
           />
         );

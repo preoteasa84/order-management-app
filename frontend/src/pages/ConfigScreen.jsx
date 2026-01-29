@@ -16,11 +16,16 @@ const ConfigScreen = ({
   orders,
   dayStatus,
   currentUser,
+  users,
   showMessage,
   saveData,
   loadAllData,
   syncClientsToAPI,
   syncProductsToAPI,
+  syncUsersToAPI,
+  syncAgentsToAPI,
+  syncOrdersToAPI,
+  syncZonesToAPI,
   API_URL,
 }) => {
   const [localCompany, setLocalCompany] = useState(company);
@@ -387,6 +392,7 @@ const ConfigScreen = ({
                   company,
                   gestiuni,
                   agents,
+                  users,
                   priceZones,
                   products,
                   clients,
@@ -456,6 +462,7 @@ const ConfigScreen = ({
                         saveData("company", data.company),
                         saveData("gestiuni", data.gestiuni || []),
                         saveData("agents", data.agents || []),
+                        saveData("users", data.users || []),
                         saveData("priceZones", data.priceZones || []),
                         saveData("products", data.products),
                         saveData("clients", data.clients),
@@ -464,9 +471,15 @@ const ConfigScreen = ({
                         saveData("dayStatus", data.dayStatus || {}),
                       ]);
 
-                      // Sync clients and products to API
-                      await syncClientsToAPI(data.clients);
-                      await syncProductsToAPI(data.products);
+                      // Sync all data to API
+                      await Promise.all([
+                        syncUsersToAPI(data.users || []),
+                        syncAgentsToAPI(data.agents || []),
+                        syncOrdersToAPI(data.orders || []),
+                        syncZonesToAPI(data.priceZones || []),
+                        syncClientsToAPI(data.clients),
+                        syncProductsToAPI(data.products),
+                      ]);
 
                       // Reîncarcă
                       await loadAllData();
