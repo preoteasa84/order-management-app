@@ -1,0 +1,119 @@
+import React, { useState, useEffect } from 'react';
+import { authService } from './utils/auth';
+import { Header } from './components/Header';
+import { Navigation } from './components/Navigation';
+import { LoginScreen } from './components/LoginScreen';
+
+// Import all page screens
+import { OrdersAgentScreen } from './pages/OrdersAgentScreen';
+import { OrdersMatrixScreen } from './pages/OrdersMatrixScreen';
+import { ReportsScreen } from './pages/ReportsScreen';
+import { ExportScreen } from './pages/ExportScreen';
+import { ClientsScreen } from './pages/ClientsScreen';
+import { ProductsScreen } from './pages/ProductsScreen';
+import { ConfigScreen } from './pages/ConfigScreen';
+import { ContractsScreen } from './pages/ContractsScreen';
+
+const App = () => {
+  const API_URL = 'http://192.168.100.136:5000';
+  
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
+  const [activeScreen, setActiveScreen] = useState('dashboard');
+  const [message, setMessage] = useState(null);
+  
+  // State for all data
+  const [clients, setClients] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [agents, setAgents] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [contracts, setContracts] = useState([]);
+  const [dayStatus, setDayStatus] = useState({});
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem('user');
+    const savedToken = localStorage.getItem('token');
+    if (savedUser && savedToken) {
+      setUser(JSON.parse(savedUser));
+      setToken(savedToken);
+      loadAllData();
+    }
+  }, []);
+
+  const loadAllData = async () => {
+    try {
+      // Load all data from API
+      const clientsRes = await fetch(`${API_URL}/api/users/clients`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (clientsRes.ok) setClients(await clientsRes.json());
+
+      const agentsRes = await fetch(`${API_URL}/api/agents`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (agentsRes.ok) setAgents(await agentsRes.json());
+    } catch (err) {
+      console.error('Error loading data:', err);
+    }
+  };
+
+  const handleLoginSuccess = (userData) => {
+    setUser(userData);
+    setToken(localStorage.getItem('token'));
+    setActiveScreen('dashboard');
+    loadAllData();
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    setUser(null);
+    setToken(null);
+    setActiveScreen('dashboard');
+  };
+
+  const showMessage = (text, type = 'success') => {
+    setMessage({ text, type });
+    setTimeout(() => setMessage(null), 3000);
+  };
+
+  if (!user) {
+    return <LoginScreen onLoginSuccess={handleLoginSuccess} API_URL={API_URL} />;
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+      <Header user={user} onLogout={handleLogout} />
+      
+      <div style={{ display: 'flex', flex: 1 }}>
+        <Navigation activeScreen={activeScreen} onNavigate={setActiveScreen} user={user} />
+        
+        <div style={{ flex: 1, padding: '20px', overflowY: 'auto', backgroundColor: '#f9f9f9' }}>
+          {message && (
+            <div style={{
+              padding: '10px 15px',
+              marginBottom: '20px',
+              backgroundColor: message.type === 'error' ? '#f8d7da' : '#d4edda',
+              color: message.type === 'error' ? '#721c24' : '#155724',
+              borderRadius: '4px',
+            }}>
+              {message.text}
+            </div>
+          )}
+
+          {activeScreen === 'dashboard' && <div><h2>Dashboard</h2><p>Welcome!</p></div>}
+          {activeScreen === 'matrice_comenzi' && <OrdersMatrixScreen dayStatus={dayStatus} setDayStatus={setDayStatus} />}
+          {activeScreen === 'orders_agent' && <OrdersAgentScreen dayStatus={dayStatus} setDayStatus={setDayStatus} clients={clients} />}
+          {activeScreen === 'rapoarte' && <ReportsScreen />}
+          {activeScreen === 'clienti' && <ClientsScreen clients={clients} setClients={setClients} showMessage={showMessage} API_URL={API_URL} token={token} />}
+          {activeScreen === 'produse' && <ProductsScreen products={products} setProducts={setProducts} showMessage={showMessage} API_URL={API_URL} token={token} />}
+          {activeScreen === 'contracte' && <ContractsScreen contracts={contracts} setContracts={setContracts} showMessage={showMessage} />}
+          {activeScreen === 'configurare' && <ConfigScreen />}
+          {activeScreen === 'export_documente' && <ExportScreen dayStatus={dayStatus} setDayStatus={setDayStatus} />}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default App;

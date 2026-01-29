@@ -17,7 +17,7 @@ import UserManager from "./pages/UserManager";
 
 const App = () => {
   // API Configuration
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  const API_URL = import.meta.env.VITE_API_URL || 'http://192.168.100.136:5000';
   
   // Auth state
   const [currentUser, setCurrentUser] = useState(null);
@@ -68,9 +68,9 @@ const App = () => {
   );
 
   // ✅ API-aware Storage - uses API for clients/products, localStorage for others
-  const loadData = async (key) => {
+    const loadData = async (key) => {
     try {
-      // Use API for clients and products
+      // Use API for clients, products, agents, and users
       if (key === 'clients') {
         const response = await fetch(`${API_URL}/api/clients`);
         if (response.ok) {
@@ -99,36 +99,24 @@ const App = () => {
       } else if (key === 'users') {
         const response = await fetch(`${API_URL}/api/users`);
         if (response.ok) {
-          const result = await response.json();
-          return result.success ? result.data : [];
+          return await response.json();
         }
         console.warn('API not available for users, using localStorage fallback');
         const result = localStorage.getItem(key);
         return result ? JSON.parse(result) : null;
-      } else if (key === 'zones') {
-        const response = await fetch(`${API_URL}/api/zones`);
-        if (response.ok) {
-          return await response.json();
-        }
-        console.warn('API not available for zones, using localStorage fallback');
-        const result = localStorage.getItem('priceZones');
-        return result ? JSON.parse(result) : null;
       } else {
-        // Use localStorage for other data
+        // For other data, use localStorage
         const result = localStorage.getItem(key);
         return result ? JSON.parse(result) : null;
       }
     } catch (error) {
       console.error(`Error loading ${key}:`, error);
-      // Fallback to localStorage on error
-      try {
-        const result = localStorage.getItem(key);
-        return result ? JSON.parse(result) : null;
-      } catch {
-        return null;
-      }
+      const result = localStorage.getItem(key);
+      return result ? JSON.parse(result) : null;
     }
   };
+ 
+
 
   const saveData = async (key, data) => {
     try {
@@ -498,58 +486,32 @@ const App = () => {
     });
 
     const handleLogin = async () => {
-      try {
-        // Try to authenticate against API users
-        const response = await fetch(`${API_URL}/api/users`);
-        if (response.ok) {
-          const result = await response.json();
-          const apiUsers = result.success ? result.data : result;
-          
-          // Find user by username
-          const user = apiUsers.find(u => u.username === credentials.username);
-          
-          if (user && user.password === credentials.password) {
-            // Login successful
-            setCurrentUser({ 
-              username: user.username, 
-              role: user.role, 
-              name: user.name,
-              agentId: user.agent_id 
-            });
-            setActiveSection("dashboard");
-            return;
-          }
-        }
-      } catch (error) {
-        console.warn('API login failed, falling back to hardcoded users:', error);
-      }
+  try {
+    const response = await fetch(`${API_URL}/api/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        username: credentials.username,
+        password: credentials.password
+      })
+    });
 
-      // Fallback to hardcoded users for development/testing
-      const users = {
-        admin: { password: "admin", role: "admin", name: "Administrator" },
-        birou: { password: "birou", role: "birou", name: "Birou" },
-        agent1: {
-          password: "agent1",
-          role: "agent",
-          agentId: "agent1",
-          name: "Ion Popescu",
-        },
-        agent2: {
-          password: "agent2",
-          role: "agent",
-          agentId: "agent2",
-          name: "Maria Ionescu",
-        },
-      };
+    const data = await response.json();
 
-      const user = users[credentials.username];
-      if (user && user.password === credentials.password) {
-        setCurrentUser({ username: credentials.username, ...user });
-        setActiveSection("dashboard");
-      } else {
-        showMessage("Date de autentificare invalide! ", "error");
-      }
-    };
+    if (response.ok && data.user) {
+      setCurrentUser(data.user);
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      setActiveSection("dashboard");
+    } else {
+      console.error('Login error:', data.error);
+      alert(data.error || 'Login failed');
+    }
+  } catch (error) {
+    console.error('Login error:', error);
+    alert('Login failed: ' + error.message);
+  }
+};
 
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center p-4">
@@ -576,7 +538,7 @@ const App = () => {
                   setCredentials({ ...credentials, username: e.target.value })
                 }
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus: ring-amber-500 focus: border-transparent"
-                placeholder="admin / birou / agent1"
+                placeholder="Username"
               />
             </div>
 
@@ -605,10 +567,9 @@ const App = () => {
           </div>
 
           <div className="mt-6 p-4 bg-gray-50 rounded-lg text-sm text-gray-600">
-            <p className="font-semibold mb-2">Conturi demo:</p>
-            <p>• admin / admin</p>
-            <p>• birou / birou</p>
-            <p>• agent1 / agent1</p>
+            <div className="text-center">
+              <p className="font-semibold mb-2 animate-pulse">© @preoteasa</p>
+            </div>
           </div>
         </div>
       </div>

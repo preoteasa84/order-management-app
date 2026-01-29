@@ -15,12 +15,11 @@ function hashPassword(password) {
 router.get('/', (req, res) => {
     try {
         const rows = db.prepare('SELECT id, username, role, name, agent_id, status, createdAt, updatedAt FROM users ORDER BY name').all();
-        res.json({ success: true, data: rows || [] });
+        res.json(rows || []);  // ← CHANGED! Was: res.json({ success: true, data: rows || [] });
     } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
+        res.status(500).json({ error: err.message });
     }
 });
-
 // Get single user
 router.get('/:id', (req, res) => {
     try {
