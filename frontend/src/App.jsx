@@ -497,7 +497,34 @@ const App = () => {
       password: "",
     });
 
-    const handleLogin = () => {
+    const handleLogin = async () => {
+      try {
+        // Try to authenticate against API users
+        const response = await fetch(`${API_URL}/api/users`);
+        if (response.ok) {
+          const result = await response.json();
+          const apiUsers = result.success ? result.data : result;
+          
+          // Find user by username
+          const user = apiUsers.find(u => u.username === credentials.username);
+          
+          if (user && user.password === credentials.password) {
+            // Login successful
+            setCurrentUser({ 
+              username: user.username, 
+              role: user.role, 
+              name: user.name,
+              agentId: user.agent_id 
+            });
+            setActiveSection("dashboard");
+            return;
+          }
+        }
+      } catch (error) {
+        console.warn('API login failed, falling back to hardcoded users:', error);
+      }
+
+      // Fallback to hardcoded users for development/testing
       const users = {
         admin: { password: "admin", role: "admin", name: "Administrator" },
         birou: { password: "birou", role: "birou", name: "Birou" },
