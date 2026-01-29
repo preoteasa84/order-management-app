@@ -6,6 +6,7 @@ const db = require('./database');
 // Import route modules
 const agentsRouter = require('./routes/agents');
 const usersRouter = require('./routes/users');
+const zonesRouter = require('./routes/zones');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -17,6 +18,7 @@ app.use(express.json());
 // Mount route modules
 app.use('/api/agents', agentsRouter);
 app.use('/api/users', usersRouter);
+app.use('/api/zones', zonesRouter);
 
 // Health check
 app.get('/api/health', (req, res) => {

@@ -29,6 +29,7 @@ const App = () => {
   const [gestiuni, setGestiuni] = useState([]);
   const [agents, setAgents] = useState([]);
   const [users, setUsers] = useState([]);
+  const [zones, setZones] = useState([]);
   const [priceZones, setPriceZones] = useState([]);
   const [products, setProducts] = useState([]);
   const [clients, setClients] = useState([]);
@@ -103,6 +104,14 @@ const App = () => {
         }
         console.warn('API not available for users, using localStorage fallback');
         const result = localStorage.getItem(key);
+        return result ? JSON.parse(result) : null;
+      } else if (key === 'zones') {
+        const response = await fetch(`${API_URL}/api/zones`);
+        if (response.ok) {
+          return await response.json();
+        }
+        console.warn('API not available for zones, using localStorage fallback');
+        const result = localStorage.getItem('priceZones');
         return result ? JSON.parse(result) : null;
       } else {
         // Use localStorage for other data
@@ -315,6 +324,7 @@ const App = () => {
         agentsData,
         usersData,
         zonesData,
+        priceZonesData,
         productsData,
         clientsData,
         contractsData,
@@ -325,6 +335,7 @@ const App = () => {
         loadData("gestiuni"),
         loadData("agents"),
         loadData("users"),
+        loadData("zones"),
         loadData("priceZones"),
         loadData("products"),
         loadData("clients"),
@@ -337,7 +348,8 @@ const App = () => {
       setGestiuni(gestiuniData || getDefaultGestiuni());
       setAgents(agentsData || getDefaultAgents());
       setUsers(usersData || []);
-      setPriceZones(zonesData || getDefaultPriceZones());
+      setZones(zonesData || getDefaultPriceZones());
+      setPriceZones(priceZonesData || getDefaultPriceZones());
       setProducts(productsData || getDefaultProducts());
       setClients(clientsData || getDefaultClients());
       setContracts(contractsData || []);
@@ -613,6 +625,7 @@ const App = () => {
             products={products}
             setProducts={setProducts}
             gestiuni={gestiuni}
+            zones={zones}
             priceZones={priceZones}
             editingProduct={editingProduct}
             setEditingProduct={setEditingProduct}
@@ -642,7 +655,10 @@ const App = () => {
             setCompany={setCompany}
             gestiuni={gestiuni}
             agents={agents}
+            zones={zones}
+            setZones={setZones}
             priceZones={priceZones}
+            setPriceZones={setPriceZones}
             products={products}
             clients={clients}
             contracts={contracts}
@@ -654,6 +670,7 @@ const App = () => {
             loadAllData={loadAllData}
             syncClientsToAPI={syncClientsToAPI}
             syncProductsToAPI={syncProductsToAPI}
+            API_URL={API_URL}
           />
         );
       case "orders-agent":
@@ -702,7 +719,8 @@ const App = () => {
           <AgentManager
             agents={agents}
             setAgents={setAgents}
-            priceZones={priceZones}
+            zones={zones}
+            users={users}
             showMessage={showMessage}
             API_URL={API_URL}
           />
@@ -712,6 +730,7 @@ const App = () => {
           <UserManager
             users={users}
             setUsers={setUsers}
+            agents={agents}
             showMessage={showMessage}
             API_URL={API_URL}
           />

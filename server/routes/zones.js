@@ -3,11 +3,11 @@ const router = express.Router();
 
 let zones = []; // This will act as an in-memory database for demonstration.
 
-router.get('/api/zones', (req, res) => {
+router.get('/', (req, res) => {
     res.status(200).json(zones);
 });
 
-router.post('/api/zones', (req, res) => {
+router.post('/', (req, res) => {
     const newZone = req.body;
     // Validate the newZone and handle errors
     if (!newZone.name) {
@@ -17,10 +17,10 @@ router.post('/api/zones', (req, res) => {
     res.status(201).json(newZone);
 });
 
-router.put('/api/zones/:id', (req, res) => {
+router.put('/:id', (req, res) => {
     const { id } = req.params;
     const updatedZone = req.body;
-    const index = zones.findIndex(zone => zone.id === parseInt(id));
+    const index = zones.findIndex(zone => zone.id === id);
 
     if (index === -1) {
         return res.status(404).json({ error: 'Zone not found' });
@@ -30,9 +30,9 @@ router.put('/api/zones/:id', (req, res) => {
     res.status(200).json(zones[index]);
 });
 
-router.delete('/api/zones/:id', (req, res) => {
+router.delete('/:id', (req, res) => {
     const { id } = req.params;
-    const index = zones.findIndex(zone => zone.id === parseInt(id));
+    const index = zones.findIndex(zone => zone.id === id);
 
     if (index === -1) {
         return res.status(404).json({ error: 'Zone not found' });
