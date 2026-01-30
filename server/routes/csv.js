@@ -6,6 +6,22 @@ const { stringify } = require('csv-stringify/sync');
 const { requireAdmin } = require('../middleware/auth');
 const { initializeClientProducts } = require('./client-products');
 
+// Standard product fields (not zone columns)
+const STANDARD_PRODUCT_FIELDS = [
+    'codArticolFurnizor', 'codProductie', 'codBare', 
+    'descriere', 'um', 'gestiune', 'gramajKg', 'cotaTVA'
+];
+
+// Helper function to get zone code to ID mapping
+function getZoneCodeMapping() {
+    const zones = db.prepare('SELECT id, code FROM zones').all();
+    const zoneCodeToId = {};
+    for (const zone of zones) {
+        zoneCodeToId[zone.code] = zone.id;
+    }
+    return { zones, zoneCodeToId };
+}
+
 // Apply admin middleware to all routes
 router.use(requireAdmin);
 
@@ -178,12 +194,8 @@ router.post('/import-products', async (req, res) => {
         }
 
         // Get all zones from database and create code-to-id mapping
-        const zones = db.prepare('SELECT id, code FROM zones').all();
+        const { zones, zoneCodeToId } = getZoneCodeMapping();
         const zoneIds = zones.map(z => z.id);
-        const zoneCodeToId = {};
-        for (const zone of zones) {
-            zoneCodeToId[zone.code] = zone.id;
-        }
 
         // Validate records and build products with prices
         const errors = [];
@@ -232,11 +244,9 @@ router.post('/import-products', async (req, res) => {
                             prices[zoneId] = price;
                         }
                     }
-                } else if (key !== 'codArticolFurnizor' && key !== 'codProductie' && key !== 'codBare' && 
-                          key !== 'descriere' && key !== 'um' && key !== 'gestiune' && 
-                          key !== 'gramajKg' && key !== 'cotaTVA') {
+                } else if (!STANDARD_PRODUCT_FIELDS.includes(key)) {
                     // Check if this looks like it could be a zone column but wasn't found
-                    if (key.match(/^Z\d+$/) || key.startsWith('zone')) {
+                    if (key.match(/^Z\d+$/) || key.match(/^zone_\d+$/)) {
                         errors.push(`Row ${rowNum}: Zone code or ID '${key}' not found in database`);
                         hasInvalidPrice = true;
                     }
@@ -453,11 +463,7 @@ router.post('/update-prices', async (req, res) => {
         }
 
         // Get all zones from database and create code-to-id mapping
-        const zones = db.prepare('SELECT id, code FROM zones').all();
-        const zoneCodeToId = {};
-        for (const zone of zones) {
-            zoneCodeToId[zone.code] = zone.id;
-        }
+        const { zoneCodeToId } = getZoneCodeMapping();
 
         // Validate records and extract price updates
         const errors = [];
@@ -514,11 +520,9 @@ router.post('/update-prices', async (req, res) => {
                             prices[zoneId] = price;
                         }
                     }
-                } else if (key !== 'codArticolFurnizor' && key !== 'codProductie' && key !== 'codBare' && 
-                          key !== 'descriere' && key !== 'um' && key !== 'gestiune' && 
-                          key !== 'gramajKg' && key !== 'cotaTVA') {
+                } else if (!STANDARD_PRODUCT_FIELDS.includes(key)) {
                     // Check if this looks like it could be a zone column but wasn't found
-                    if (key.match(/^Z\d+$/) || key.startsWith('zone')) {
+                    if (key.match(/^Z\d+$/) || key.match(/^zone_\d+$/)) {
                         errors.push(`Row ${rowNum}: Zone code or ID '${key}' not found in database`);
                         hasInvalidPrice = true;
                     }
