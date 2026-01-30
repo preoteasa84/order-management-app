@@ -579,8 +579,6 @@ const App = () => {
     { id: "agent2", code: "Agent2", name: "Maria Ionescu" },
   ];
 
-  const getDefaultPriceZones = () => [];
-
   const getDefaultProducts = () => [
     {
       id: "pc",

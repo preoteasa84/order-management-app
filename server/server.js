@@ -417,16 +417,6 @@ app.post('/api/client-products/restore', (req, res) => {
     }
 });
 
-// Initialize default zones if none exist
-const initializeDefaultZones = () => {
-    // Function disabled - no default zones should be created
-    // Only zones created by users via Settings should exist
-    console.log('Default zones initialization disabled - only user-created zones will be used');
-};
-
-// Initialize zones on startup - DISABLED
-// initializeDefaultZones();
-
 // Start server
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Server running on http://0.0.0.0:${PORT}`);
