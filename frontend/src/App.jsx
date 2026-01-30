@@ -499,6 +499,7 @@ const App = () => {
 
   const loadAllData = async () => {
     try {
+      console.log('🔄 Loading all data...');
       const [
         companyData,
         gestiuniData,
@@ -525,6 +526,14 @@ const App = () => {
         loadData("dayStatus"),
       ]);
 
+      console.log('✅ Data loaded:', {
+        agents: agentsData?.length || 0,
+        zones: zonesData?.length || 0,
+        priceZones: priceZonesData?.length || 0,
+        clients: clientsData?.length || 0,
+        products: productsData?.length || 0
+      });
+
       setCompany(companyData || getDefaultCompany());
       setGestiuni(gestiuniData || getDefaultGestiuni());
       setAgents(agentsData || getDefaultAgents());
@@ -537,8 +546,10 @@ const App = () => {
       setContracts(contractsData || []);
       setOrders(ordersData || []);
       setDayStatus(dayStatusData || {});
+      
+      console.log('✅ State updated successfully');
     } catch (error) {
-      console.error("Error loading data:", error);
+      console.error("❌ Error loading data:", error);
     }
   };
 
