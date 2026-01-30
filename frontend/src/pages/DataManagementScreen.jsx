@@ -20,6 +20,13 @@ const DataManagementScreen = ({ API_URL, showMessage, zones }) => {
 
   // Get auth token from localStorage
   const getAuthToken = () => {
+    // Try to get token directly
+    const token = localStorage.getItem('token');
+    if (token) {
+      return token;
+    }
+    
+    // Fallback to checking currentUser object
     const user = localStorage.getItem('currentUser');
     if (user) {
       const userData = JSON.parse(user);
