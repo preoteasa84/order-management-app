@@ -530,7 +530,8 @@ const App = () => {
       setAgents(agentsData || getDefaultAgents());
       setUsers(usersData || []);
       setZones(zonesData || []);
-      setPriceZones(priceZonesData || []);
+      // Use zones as priceZones if priceZones is not available
+      setPriceZones(priceZonesData || zonesData || []);
       setProducts(productsData || getDefaultProducts());
       setClients(clientsData || getDefaultClients());
       setContracts(contractsData || []);
@@ -579,85 +580,9 @@ const App = () => {
     { id: "agent2", code: "Agent2", name: "Maria Ionescu" },
   ];
 
-  const getDefaultProducts = () => [
-    {
-      id: "pc",
-      codArticolFurnizor: "00000001",
-      codProductie: "684811825476",
-      codBare: "",
-      descriere: "PAINE FELIAT 1.5 KG",
-      um: "BUC",
-      gestiune: "piese",
-      gramajKg: 1.5,
-      cotaTVA: 11,
-      prices: { "zona-a": 9.17, "zona-b": 8.5, "zona-c": 7.8 },
-    },
-    {
-      id: "corn",
-      codArticolFurnizor: "00000002",
-      codProductie: "684811825477",
-      codBare: "",
-      descriere: "CORN CU CAS 90G",
-      um: "BUC",
-      gestiune: "piese",
-      gramajKg: 0.09,
-      cotaTVA: 11,
-      prices: { "zona-a": 2.02, "zona-b": 1.85, "zona-c": 1.7 },
-    },
-    {
-      id: "chifle",
-      codArticolFurnizor: "00000003",
-      codProductie: "684811825478",
-      codBare: "",
-      descriere: "CHIFLE",
-      um: "BUC",
-      gestiune: "piese",
-      gramajKg: 0.05,
-      cotaTVA: 11,
-      prices: { "zona-a": 1.74, "zona-b": 1.6, "zona-c": 1.5 },
-    },
-  ];
+  const getDefaultProducts = () => [];
 
-  const getDefaultClients = () => [
-    {
-      id: "olimpos",
-      nume: "OLIMPOS SRL",
-      cif: "RO12345678",
-      nrRegCom: "J25/123/2020",
-      codContabil: "00001",
-      judet: "Covasna",
-      localitate: "Sfântu Gheorghe",
-      strada: "Str. Principală nr. 10",
-      codPostal: "520008",
-      telefon: "0267-111222",
-      email: "contact@olimpos.ro",
-      banca: "BCR",
-      iban: "RO49RNCB0000000111222333",
-      agentId: "agent1",
-      priceZone: "zona-a",
-      afiseazaKG: true,
-      productCodes: { pc: "PAIN-001" },
-    },
-    {
-      id: "gaspar3",
-      nume: "GASPAR 3 SRL",
-      cif: "RO87654321",
-      nrRegCom: "J25/456/2019",
-      codContabil: "00002",
-      judet: "Covasna",
-      localitate: "Sfântu Gheorghe",
-      strada: "Str. Mihai Viteazu nr. 5",
-      codPostal: "520009",
-      telefon: "0267-222333",
-      email: "contact@gaspar3.ro",
-      banca: "BCR",
-      iban: "RO49RNCB0000000222333444",
-      agentId: "agent1",
-      priceZone: "zona-a",
-      afiseazaKG: false,
-      productCodes: {},
-    },
-  ];
+  const getDefaultClients = () => [];
 
   // Show message helper
   const showMessage = (text, type = "success") => {
