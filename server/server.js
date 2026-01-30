@@ -8,6 +8,8 @@ const agentsRouter = require('./routes/agents');
 const usersRouter = require('./routes/users');
 const zonesRouter = require('./routes/zones');
 const authRouter = require('./routes/auth');
+const clientProductsRouter = require('./routes/client-products');
+const { initializeClientProducts } = require('./routes/client-products');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -21,6 +23,7 @@ app.use('/api/agents', agentsRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/zones', zonesRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/clients', clientProductsRouter);
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -203,6 +206,10 @@ app.post('/api/clients', (req, res) => {
             client.priceZone, client.afiseazaKG ? 1 : 0, 
             JSON.stringify(client.productCodes || {})
         );
+        
+        // Initialize all products as active for this new client
+        initializeClientProducts(client.id);
+        
         res.json({ ...client, createdAt: new Date().toISOString() });
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -355,6 +362,54 @@ app.delete('/api/products/:id', (req, res) => {
         } else {
             res.json({ success: true });
         }
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// ============ CLIENT PRODUCTS BACKUP ENDPOINT ============
+
+// Get all client_products for backup
+app.get('/api/client-products/all', (req, res) => {
+    try {
+        const rows = db.prepare('SELECT * FROM client_products').all();
+        const clientProducts = rows.map(row => ({
+            ...row,
+            is_active: row.is_active === 1
+        }));
+        res.json(clientProducts);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Restore client_products from backup
+app.post('/api/client-products/restore', (req, res) => {
+    try {
+        const clientProducts = req.body;
+        
+        if (!Array.isArray(clientProducts)) {
+            return res.status(400).json({ error: 'Invalid data format' });
+        }
+        
+        // Clear existing client_products
+        db.prepare('DELETE FROM client_products').run();
+        
+        // Insert all client_products
+        const insert = db.prepare(`
+            INSERT INTO client_products (client_id, product_id, is_active)
+            VALUES (?, ?, ?)
+        `);
+        
+        const insertMany = db.transaction((items) => {
+            for (const item of items) {
+                insert.run(item.client_id, item.product_id, item.is_active ? 1 : 0);
+            }
+        });
+        
+        insertMany(clientProducts);
+        
+        res.json({ success: true, restored: clientProducts.length });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
