@@ -190,11 +190,47 @@ app.get('/api/clients/:id', (req, res) => {
 app.post('/api/clients', (req, res) => {
     const client = req.body;
     
+    // Validate required fields
     if (!client.id || !client.nume) {
         return res.status(400).json({ error: 'ID and nume are required' });
     }
     
+    // Validate agentId if provided
+    if (client.agentId) {
+        try {
+            const agent = db.prepare('SELECT id FROM agents WHERE id = ?').get(client.agentId);
+            if (!agent) {
+                console.error(`❌ Agent not found: ${client.agentId}`);
+                return res.status(400).json({ error: `Agent with ID '${client.agentId}' does not exist` });
+            }
+        } catch (err) {
+            console.error('❌ Error validating agent:', err);
+            return res.status(500).json({ error: 'Error validating agent: ' + err.message });
+        }
+    }
+    
+    // Validate priceZone if provided
+    if (client.priceZone) {
+        try {
+            const zone = db.prepare('SELECT id FROM zones WHERE id = ?').get(client.priceZone);
+            if (!zone) {
+                console.error(`❌ Price zone not found: ${client.priceZone}`);
+                return res.status(400).json({ error: `Price zone with ID '${client.priceZone}' does not exist` });
+            }
+        } catch (err) {
+            console.error('❌ Error validating price zone:', err);
+            return res.status(500).json({ error: 'Error validating price zone: ' + err.message });
+        }
+    }
+    
     try {
+        console.log(`💾 Creating client:`, {
+            id: client.id,
+            nume: client.nume,
+            agentId: client.agentId,
+            priceZone: client.priceZone
+        });
+        
         const result = db.prepare(
             `INSERT INTO clients (
                 id, nume, cif, nrRegCom, codContabil, judet, localitate, strada, 
@@ -212,8 +248,10 @@ app.post('/api/clients', (req, res) => {
         // Initialize all products as active for this new client
         initializeClientProducts(client.id);
         
+        console.log(`✅ Client created successfully: ${client.id}`);
         res.json({ ...client, createdAt: new Date().toISOString() });
     } catch (err) {
+        console.error('❌ Error creating client:', err);
         res.status(500).json({ error: err.message });
     }
 });
@@ -222,11 +260,46 @@ app.post('/api/clients', (req, res) => {
 app.put('/api/clients/:id', (req, res) => {
     const client = req.body;
     
+    // Validate required fields
     if (!client.nume) {
         return res.status(400).json({ error: 'nume is required' });
     }
     
+    // Validate agentId if provided
+    if (client.agentId) {
+        try {
+            const agent = db.prepare('SELECT id FROM agents WHERE id = ?').get(client.agentId);
+            if (!agent) {
+                console.error(`❌ Agent not found: ${client.agentId}`);
+                return res.status(400).json({ error: `Agent with ID '${client.agentId}' does not exist` });
+            }
+        } catch (err) {
+            console.error('❌ Error validating agent:', err);
+            return res.status(500).json({ error: 'Error validating agent: ' + err.message });
+        }
+    }
+    
+    // Validate priceZone if provided
+    if (client.priceZone) {
+        try {
+            const zone = db.prepare('SELECT id FROM zones WHERE id = ?').get(client.priceZone);
+            if (!zone) {
+                console.error(`❌ Price zone not found: ${client.priceZone}`);
+                return res.status(400).json({ error: `Price zone with ID '${client.priceZone}' does not exist` });
+            }
+        } catch (err) {
+            console.error('❌ Error validating price zone:', err);
+            return res.status(500).json({ error: 'Error validating price zone: ' + err.message });
+        }
+    }
+    
     try {
+        console.log(`💾 Updating client ${req.params.id}:`, {
+            nume: client.nume,
+            agentId: client.agentId,
+            priceZone: client.priceZone
+        });
+        
         const result = db.prepare(
             `UPDATE clients SET 
                 nume = ?, cif = ?, nrRegCom = ?, codContabil = ?, judet = ?, 
@@ -241,12 +314,16 @@ app.put('/api/clients/:id', (req, res) => {
             client.afiseazaKG ? 1 : 0, JSON.stringify(client.productCodes || {}),
             req.params.id
         );
+        
         if (result.changes === 0) {
+            console.error(`❌ Client not found: ${req.params.id}`);
             res.status(404).json({ error: 'Client not found' });
         } else {
-            res.json({ success: true });
+            console.log(`✅ Client updated successfully: ${req.params.id}`);
+            res.json({ success: true, id: req.params.id });
         }
     } catch (err) {
+        console.error('❌ Error updating client:', err);
         res.status(500).json({ error: err.message });
     }
 });

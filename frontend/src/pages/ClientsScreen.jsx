@@ -83,8 +83,34 @@ const ClientsScreen = ({
   };
 
   const handleSaveClient = async () => {
+    // Validate required fields
     if (!localEditingClient.nume || !localEditingClient.cif) {
       showMessage("Completați denumirea și CUI!  ", "error");
+      return;
+    }
+
+    // Validate agentId and priceZone
+    if (!localEditingClient.agentId) {
+      showMessage("Selectați un agent!", "error");
+      return;
+    }
+
+    if (!localEditingClient.priceZone) {
+      showMessage("Selectați o zonă de preț!", "error");
+      return;
+    }
+
+    // Validate that selected agent exists
+    const agentExists = agents.find(a => a.id === localEditingClient.agentId);
+    if (!agentExists) {
+      showMessage("Agentul selectat nu există!", "error");
+      return;
+    }
+
+    // Validate that selected price zone exists
+    const zoneExists = priceZones.find(z => z.id === localEditingClient.priceZone);
+    if (!zoneExists) {
+      showMessage("Zona de preț selectată nu există!", "error");
       return;
     }
 
@@ -93,24 +119,51 @@ const ClientsScreen = ({
         (c) => c.id === localEditingClient.id,
       );
 
+      console.log('💾 Saving client:', {
+        id: localEditingClient.id,
+        nume: localEditingClient.nume,
+        agentId: localEditingClient.agentId,
+        priceZone: localEditingClient.priceZone,
+        isUpdate: existingIndex >= 0
+      });
+
+      let response;
       if (existingIndex >= 0) {
         // Update existing client
-        await updateClient(localEditingClient.id, localEditingClient);
-        const updatedClients = [...clients];
-        updatedClients[existingIndex] = localEditingClient;
-        setClients(updatedClients);
+        response = await updateClient(localEditingClient.id, localEditingClient);
+        console.log('✅ Update response:', response);
+        
+        // Reload client from API to ensure we have the latest data
+        const updatedClientResponse = await fetch(`${API_URL}/api/clients/${localEditingClient.id}`);
+        if (updatedClientResponse.ok) {
+          const updatedClient = await updatedClientResponse.json();
+          const updatedClients = [...clients];
+          updatedClients[existingIndex] = updatedClient;
+          setClients(updatedClients);
+          console.log('✅ Client updated in state:', updatedClient);
+        } else {
+          // Fallback to local state if API read fails
+          const updatedClients = [...clients];
+          updatedClients[existingIndex] = localEditingClient;
+          setClients(updatedClients);
+        }
       } else {
         // Create new client
-        await createClient(localEditingClient);
-        setClients([...clients, localEditingClient]);
+        response = await createClient(localEditingClient);
+        console.log('✅ Create response:', response);
+        
+        // Reload client from API to ensure we have the latest data
+        const newClient = response.id ? response : localEditingClient;
+        setClients([...clients, newClient]);
+        console.log('✅ Client added to state:', newClient);
       }
       
       setEditingClient(null);
       setLocalEditingClient(null);
       showMessage("Client salvat cu succes!");
     } catch (error) {
-      showMessage("Eroare la salvarea clientului!", "error");
-      console.error(error);
+      console.error('❌ Error saving client:', error);
+      showMessage("Eroare la salvarea clientului: " + (error.message || "Eroare necunoscută"), "error");
     }
   };
 
