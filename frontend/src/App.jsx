@@ -930,7 +930,7 @@ const App = () => {
         mobileMenuOpen={mobileMenuOpen}
         setMobileMenuOpen={setMobileMenuOpen}
       />
-      <div className="flex">
+      <div className="flex overflow-hidden">
         <Navigation 
           currentUser={currentUser}
           activeSection={activeSection}
@@ -938,7 +938,7 @@ const App = () => {
           mobileMenuOpen={mobileMenuOpen}
           setMobileMenuOpen={setMobileMenuOpen}
         />
-        <div className="flex-1 p-4 sm:p-6 pb-20 lg:pb-6">
+        <div className="flex-1 overflow-x-auto p-4 sm:p-6 pb-20 lg:pb-6">
           {message && (
             <div
               className={`mb-4 p-4 rounded-lg ${
