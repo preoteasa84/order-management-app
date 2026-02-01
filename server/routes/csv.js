@@ -52,11 +52,10 @@ router.post('/import-clients', async (req, res) => {
         // Validate required fields and collect errors
         const errors = [];
         const validRecords = [];
-        const skippedRecords = [];
 
         for (let i = 0; i < records.length; i++) {
             const record = records[i];
-            const rowNum = i + 2; // +2 for header row and 0-indexing
+            const rowNum = i + 2;
 
             // Check required fields
             if (!record.nume || record.nume.trim() === '') {
@@ -76,24 +75,6 @@ router.post('/import-clients', async (req, res) => {
                 continue;
             }
 
-            // Check for duplicates in database (only if fields have values)
-            let existing = null;
-            if (record.cif && record.cif.trim() !== '') {
-                existing = db.prepare('SELECT id FROM clients WHERE cif = ?').get(record.cif.trim());
-            }
-            if (!existing && record.nrRegCom && record.nrRegCom.trim() !== '') {
-                existing = db.prepare('SELECT id FROM clients WHERE nrRegCom = ?').get(record.nrRegCom.trim());
-            }
-
-            if (existing) {
-                skippedRecords.push({
-                    row: rowNum,
-                    reason: 'Duplicate CIF or nrRegCom',
-                    data: record
-                });
-                continue;
-            }
-
             validRecords.push({
                 ...record,
                 rowNum
@@ -107,10 +88,8 @@ router.post('/import-clients', async (req, res) => {
                 preview: true,
                 total: records.length,
                 valid: validRecords.length,
-                skipped: skippedRecords.length,
                 errors: errors.length,
                 validRecords,
-                skippedRecords,
                 errorMessages: errors
             });
         }
@@ -119,12 +98,21 @@ router.post('/import-clients', async (req, res) => {
         if (errors.length > 0) {
             return res.status(400).json({
                 error: 'Validation errors found',
-                errors,
-                skipped: skippedRecords
+                errors
             });
         }
 
-        // Import valid records
+        // Helper function
+        const toNullIfEmpty = (val) => (val && val.trim() !== '') ? val.trim() : null;
+
+        // Check for existing client by CIF or nrRegCom
+        const checkExistingStmt = db.prepare(`
+            SELECT id FROM clients WHERE 
+            (cif = ? AND cif IS NOT NULL) OR 
+            (nrRegCom = ? AND nrRegCom IS NOT NULL)
+            LIMIT 1
+        `);
+
         const insertStmt = db.prepare(`
             INSERT INTO clients (
                 id, nume, cif, nrRegCom, codContabil, judet, localitate, 
@@ -133,49 +121,86 @@ router.post('/import-clients', async (req, res) => {
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `);
 
+        const updateStmt = db.prepare(`
+            UPDATE clients SET
+                nume = ?, cif = ?, nrRegCom = ?, codContabil = ?, judet = ?,
+                localitate = ?, strada = ?, codPostal = ?, telefon = ?,
+                email = ?, banca = ?, iban = ?, agentId = ?, priceZone = ?,
+                afiseazaKG = ?, updatedAt = CURRENT_TIMESTAMP
+            WHERE id = ?
+        `);
+
         const importClients = db.transaction((records) => {
-            const imported = [];
+            let inserted = 0;
+            let updated = 0;
+
             for (const record of records) {
-                const id = `client-${Date.now()}-${Math.random().toString(36).substring(7)}`;
-                // Helper to convert empty strings to null
-                const toNullIfEmpty = (val) => (val && val.trim() !== '') ? val.trim() : null;
-                
-                insertStmt.run(
-                    id,
-                    record.nume.trim(),
-                    toNullIfEmpty(record.cif),
-                    toNullIfEmpty(record.nrRegCom),
-                    toNullIfEmpty(record.codContabil),
-                    record.judet.trim(),
-                    record.localitate.trim(),
-                    toNullIfEmpty(record.strada),
-                    toNullIfEmpty(record.codPostal),
-                    toNullIfEmpty(record.telefon),
-                    toNullIfEmpty(record.email),
-                    toNullIfEmpty(record.banca),
-                    toNullIfEmpty(record.iban),
-                    toNullIfEmpty(record.agentId),
-                    record.priceZone.trim(),
-                    record.afiseazaKG === 'true' || record.afiseazaKG === '1' ? 1 : 0,
-                    '{}'
-                );
+                const cif = toNullIfEmpty(record.cif);
+                const nrRegCom = toNullIfEmpty(record.nrRegCom);
 
-                // Initialize client products
-                initializeClientProducts(id);
+                // Check if client exists
+                const existing = checkExistingStmt.get(cif, nrRegCom);
 
-                imported.push({ id, ...record });
+                if (existing) {
+                    // UPDATE existing
+                    updateStmt.run(
+                        record.nume.trim(),
+                        cif,
+                        nrRegCom,
+                        toNullIfEmpty(record.codContabil),
+                        record.judet.trim(),
+                        record.localitate.trim(),
+                        toNullIfEmpty(record.strada),
+                        toNullIfEmpty(record.codPostal),
+                        toNullIfEmpty(record.telefon),
+                        toNullIfEmpty(record.email),
+                        toNullIfEmpty(record.banca),
+                        toNullIfEmpty(record.iban),
+                        toNullIfEmpty(record.agentId),
+                        record.priceZone.trim(),
+                        record.afiseazaKG === 'true' || record.afiseazaKG === '1' ? 1 : 0,
+                        existing.id
+                    );
+                    updated++;
+                } else {
+                    // INSERT new
+                    const id = `client-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+                    insertStmt.run(
+                        id,
+                        record.nume.trim(),
+                        cif,
+                        nrRegCom,
+                        toNullIfEmpty(record.codContabil),
+                        record.judet.trim(),
+                        record.localitate.trim(),
+                        toNullIfEmpty(record.strada),
+                        toNullIfEmpty(record.codPostal),
+                        toNullIfEmpty(record.telefon),
+                        toNullIfEmpty(record.email),
+                        toNullIfEmpty(record.banca),
+                        toNullIfEmpty(record.iban),
+                        toNullIfEmpty(record.agentId),
+                        record.priceZone.trim(),
+                        record.afiseazaKG === 'true' || record.afiseazaKG === '1' ? 1 : 0,
+                        '{}'
+                    );
+                    // Initialize client products only for new clients
+                    initializeClientProducts(id);
+                    inserted++;
+                }
             }
-            return imported;
+
+            return { inserted, updated };
         });
 
-        const imported = importClients(validRecords);
+        const result = importClients(validRecords);
 
         res.json({
             success: true,
-            imported: imported.length,
-            skipped: skippedRecords.length,
-            skippedRecords,
-            message: `Successfully imported ${imported.length} clients${skippedRecords.length > 0 ? `, skipped ${skippedRecords.length} duplicates` : ''}`
+            inserted: result.inserted,
+            updated: result.updated,
+            total: result.inserted + result.updated,
+            message: `Successfully processed ${result.inserted + result.updated} clients (${result.inserted} new, ${result.updated} updated)`
         });
 
     } catch (err) {

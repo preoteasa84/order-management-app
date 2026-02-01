@@ -18,13 +18,14 @@ const OrdersMatrixScreen = ({
   saveData,
   getClientProductPrice,
   isClientActive,
+  editMode,              
+  setEditMode: setEditModeFromApp,  
 }) => {
   const isDayClosed = dayStatus[selectedDate]?.productionExported || false;
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedAgent, setSelectedAgent] = useState("all");
   const [matrixData, setMatrixData] = useState({});
-  const [editMode, setEditMode] = useState(false);
   const canEdit = !isDayClosed || currentUser.role === "admin";
 
   const isClientExported = (clientId) => {
@@ -43,10 +44,12 @@ const OrdersMatrixScreen = ({
       selectedAgent === "all"
         ? clients
         : clients.filter((c) => c.agentId === selectedAgent);
-    
+
     // Filter by active status for the selected date
     if (isClientActive) {
-      agentClients = agentClients.filter((c) => isClientActive(c, selectedDate));
+      agentClients = agentClients.filter((c) =>
+        isClientActive(c, selectedDate),
+      );
     }
 
     agentClients.forEach((client) => {
@@ -71,7 +74,7 @@ const OrdersMatrixScreen = ({
     });
 
     setMatrixData(matrix);
-    setEditMode(false);
+    setEditModeFromApp(false);
   }, [selectedDate, selectedAgent, orders, contracts]);
 
   const updateQuantity = (clientId, productId, quantity) => {
@@ -189,7 +192,7 @@ const OrdersMatrixScreen = ({
 
     if (success) {
       setOrders(allOrders);
-      setEditMode(false);
+      setEditModeFromApp(false);
       showMessage(`Salvate ${newOrders.length} comenzi cu succes!`);
     }
   };
@@ -224,7 +227,7 @@ const OrdersMatrixScreen = ({
     selectedAgent === "all"
       ? clients
       : clients.filter((c) => c.agentId === selectedAgent);
-  
+
   // Filter by active status for the selected date
   if (isClientActive) {
     agentClients = agentClients.filter((c) => isClientActive(c, selectedDate));
@@ -239,9 +242,7 @@ const OrdersMatrixScreen = ({
     <div className="space-y-6">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <h2 className="text-2xl font-bold text-gray-800">
-            Matrice Comenzi
-          </h2>
+          <h2 className="text-2xl font-bold text-gray-800">Matrice Comenzi</h2>
           {isDayClosed && (
             <div className="flex items-center gap-2">
               <span className="px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm font-semibold">
@@ -291,7 +292,7 @@ const OrdersMatrixScreen = ({
               </button>
               <button
                 onClick={() => {
-                  setEditMode(false);
+                  setEditModeFromApp(false);
                   const dateOrders = orders.filter(
                     (o) => o.date === selectedDate,
                   );
@@ -335,7 +336,7 @@ const OrdersMatrixScreen = ({
                   );
                   return;
                 }
-                setEditMode(true);
+                setEditModeFromApp(true);
               }}
               disabled={!canEdit}
               className={`px-4 py-2 rounded-lg flex items-center gap-2 text-sm transition ${
@@ -375,197 +376,205 @@ const OrdersMatrixScreen = ({
         </div>
       )}
 
-      <div className="bg-white p-4 rounded-lg shadow overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-3 py-2 text-left font-semibold sticky left-0 bg-gray-50 z-10">
-                Client
-              </th>
-              <th className="px-3 py-2 text-center font-semibold">Plată</th>
-              <th className="px-3 py-2 text-right font-semibold min-w-[100px]">
-                Total
-              </th>
-              {products.map((p) => (
-                <th
-                  key={p.id}
-                  className="px-3 py-3 text-center font-semibold"
-                  style={{ minWidth: "80px" }}
-                >
-                  <div
-                    style={{
-                      height: "140px",
-                      display: "flex",
-                      alignItems: "flex-end",
-                      justifyContent: "center",
-                      paddingBottom: "8px",
-                    }}
+      <div className="bg-white rounded-lg shadow">
+        <div className="overflow-x-auto" style={{ maxHeight: "113vh" }}>
+          <table className="w-full text-sm">
+            <thead className="sticky top-0 bg-gray-50 z-30" style={{ top: "0" }}>
+              <tr>
+                <th className="px-3 py-2 text-left font-semibold sticky left-0 bg-gray-50 z-10">
+                  Client
+                </th>
+                <th className="px-1 py-2 text-center font-semibold">Plată</th>
+                <th className="px-1 py-2 text-right font-semibold min-w-[80px]">
+                  Total
+                </th>
+                {products.map((p) => (
+                  <th
+                    key={p.id}
+                    className="px-1 py-2 text-center font-semibold"
+                    style={{ minWidth: "60px" }}
                   >
                     <div
                       style={{
-                        writingMode: "vertical-rl",
-                        textOrientation: "mixed",
-                        transform: "rotate(180deg)",
-                        fontSize: "12px",
-                        fontWeight: "600",
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        maxWidth: "100%",
+                        height: "180px",
+                        display: "flex",
+                        alignItems: "flex-end",
+                        justifyContent: "center",
+                        paddingBottom: "8px",
                       }}
                     >
-                      {p.descriere}
+                      <div
+                        style={{
+                          writingMode: "vertical-rl",
+                          textOrientation: "mixed",
+                          transform: "rotate(180deg)",
+                          fontSize: "13px",
+                          fontWeight: "600",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          maxWidth: "100%",
+                        }}
+                      >
+                        {p.descriere}
+                      </div>
                     </div>
-                  </div>
-                  <div
-                    style={{
-                      fontSize: "11px",
-                      color: "#666",
-                      fontWeight: "normal",
-                      marginTop: "4px",
-                    }}
-                  >
-                    {p.um}
-                  </div>
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {agentClients.map((client) => {
-              const data = matrixData[client.id];
-              const total = calculateClientTotal(client.id);
-              const isExported = isClientExported(client.id);
+                    <div
+                      style={{
+                        fontSize: "11px",
+                        color: "#666",
+                        fontWeight: "normal",
+                        marginTop: "4px",
+                      }}
+                    >
+                      {p.um}
+                    </div>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {agentClients.map((client) => {
+                const data = matrixData[client.id];
+                const total = calculateClientTotal(client.id);
+                const isExported = isClientExported(client.id);
 
-              return (
-                <tr
-                  key={client.id}
-                  className={`border-t border-gray-200 hover:bg-gray-50 ${
-                    isExported ? "bg-green-50" : ""
-                  }`}
-                >
-                  <td
-                    className={`px-3 py-2 font-medium sticky left-0 z-10 ${
-                      isExported ? "bg-green-50" : "bg-white"
+                return (
+                  <tr
+                    key={client.id}
+                    className={`border-t border-gray-200 hover:bg-gray-50 ${
+                      isExported ? "bg-green-50" : ""
                     }`}
                   >
-                    <div className="flex items-center gap-2">
-                      <div>
-                        <div className="font-semibold text-sm">
-                          {client.nume}
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          {
-                            priceZones.find((z) => z.id === client.priceZone)
-                              ?.name
-                          }
-                        </div>
-                      </div>
-                      {isExported && (
-                        <span className="text-green-600 font-bold text-sm">
-                          ✓
-                        </span>
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-3 py-2">
-                    {editMode && !isExported ? (
-                      <div className="flex flex-col gap-1 items-center">
-                        <select
-                          value={data?.paymentType || "immediate"}
-                          onChange={(e) =>
-                            updatePaymentType(client.id, e.target.value)
-                          }
-                          disabled={isExported}
-                          className="px-2 py-1 border border-gray-300 rounded text-xs w-16 disabled:bg-gray-100"
-                        >
-                          <option value="immediate">💰</option>
-                          <option value="credit">📄</option>
-                        </select>
-                        {data?.paymentType === "credit" && (
-                          <input
-                            type="date"
-                            value={data.dueDate || ""}
-                            onChange={(e) =>
-                              updateDueDate(client.id, e.target.value)
-                            }
-                            className="px-2 py-1 border border-gray-300 rounded text-xs w-24"
-                          />
-                        )}
-                      </div>
-                    ) : (
-                      <div className="text-center text-sm">
-                        {data?.paymentType === "immediate"
-                          ? "💰"
-                          : data?.paymentType === "credit"
-                            ? "📄"
-                            : "-"}
-                        {data?.paymentType === "credit" && data?.dueDate && (
+                    <td
+                      className={`px-3 py-2 font-medium sticky left-0 z-10 ${
+                        isExported ? "bg-green-50" : "bg-white"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <div>
+                          <div className="font-semibold text-sm">
+                            {client.nume}
+                          </div>
                           <div className="text-xs text-gray-500">
-                            {data.dueDate}
+                            {
+                              priceZones.find((z) => z.id === client.priceZone)
+                                ?.name
+                            }
                           </div>
+                        </div>
+                        {isExported && (
+                          <span className="text-green-600 font-bold text-sm">
+                            ✓
+                          </span>
                         )}
                       </div>
-                    )}
-                  </td>
-                  <td className="px-3 py-2 text-right font-semibold text-sm">
-                    {total > 0 ? total.toFixed(2) : "-"}
-                  </td>
-                  {products.map((p) => {
-                    const price = getClientProductPrice(client, p);
-                    return (
-                      <td key={p.id} className="px-2 py-2 text-center">
-                        {editMode && !isExported ? (
-                          <div className="flex flex-col items-center gap-1">
+                    </td>
+                    <td className="px-1 py-2">
+                      {editMode && !isExported ? (
+                        <div className="flex flex-col gap-1 items-center">
+                          <select
+                            value={data?.paymentType || "immediate"}
+                            onChange={(e) =>
+                              updatePaymentType(client.id, e.target.value)
+                            }
+                            disabled={isExported}
+                            className="px-2 py-1 border border-gray-300 rounded text-xs w-16 disabled:bg-gray-100"
+                          >
+                            <option value="immediate">💰</option>
+                            <option value="credit">📄</option>
+                          </select>
+                          {data?.paymentType === "credit" && (
                             <input
-                              type="number"
-                              min="0"
-                              value={data?.quantities[p.id] || ""}
+                              type="date"
+                              value={data.dueDate || ""}
                               onChange={(e) =>
-                                updateQuantity(
-                                  client.id,
-                                  p.id,
-                                  parseInt(e.target.value) || 0,
-                                )
+                                updateDueDate(client.id, e.target.value)
                               }
-                              disabled={isExported}
-                              className="w-12 px-1 py-1 border border-gray-300 rounded text-center text-xs disabled:bg-gray-100 disabled:cursor-not-allowed"
-                              placeholder="0"
+                              className="px-2 py-1 border border-gray-300 rounded text-xs w-24"
                             />
-                            <div className="text-xs text-gray-400">
-                              {price?.toFixed(2)}
+                          )}
+                        </div>
+                      ) : (
+                        <div className="text-center text-sm">
+                          {data?.paymentType === "immediate"
+                            ? "💰"
+                            : data?.paymentType === "credit"
+                              ? "📄"
+                              : "-"}
+                          {data?.paymentType === "credit" && data?.dueDate && (
+                            <div className="text-xs text-gray-500">
+                              {data.dueDate}
                             </div>
-                          </div>
-                        ) : (
-                          <div className="font-medium text-sm">
-                            {data?.quantities[p.id] || "-"}
-                          </div>
-                        )}
-                      </td>
-                    );
-                  })}
-                </tr>
-              );
-            })}
-            <tr className="border-t-2 border-gray-400 font-bold bg-amber-50">
-              <td className="px-3 py-2 sticky left-0 bg-amber-50 z-10 font-semibold">
-                TOTAL
-              </td>
-              <td className="px-3 py-2"></td>
-              <td className="px-3 py-2 text-right text-sm">
-                {totalValue.toFixed(2)}
-              </td>
-              {products.map((p) => (
-                <td
-                  key={p.id}
-                  className="px-2 py-2 text-center font-semibold text-sm"
-                >
-                  {calculateProductTotal(p.id) || "-"}
+                          )}
+                        </div>
+                      )}
+                    </td>
+                   <td className="px-1 py-2 text-right font-semibold text-sm">
+                      {total > 0 ? total.toFixed(2) : "-"}
+                    </td>
+                    {products.map((p) => {
+                      const price = getClientProductPrice(client, p);
+                      return (
+                        <td key={p.id} className="px-1 py-2 text-center">
+                          {editMode && !isExported ? (
+                            <div className="flex flex-col items-center gap-1">
+                              <input
+                                type="number"
+                                min="0"
+                                value={data?.quantities[p.id] || ""}
+                                onChange={(e) =>
+                                  updateQuantity(
+                                    client.id,
+                                    p.id,
+                                    parseInt(e.target.value) || 0,
+                                  )
+                                }
+                                disabled={isExported}
+                                className="w-12 px-1 py-1 border border-gray-300 rounded text-center text-xs disabled:bg-gray-100 disabled:cursor-not-allowed"
+                                placeholder="0"
+                              />
+                              <div className="text-xs text-gray-400">
+                                {price?.toFixed(2)}
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="font-medium text-sm">
+                              {data?.quantities[p.id] || "-"}
+                            </div>
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
+              <tr className="border-t-2 border-gray-400 font-bold bg-amber-50">
+                <td className="px-3 py-2 sticky left-0 bg-amber-50 z-10 font-semibold">
+                  TOTAL
                 </td>
-              ))}
-            </tr>
-          </tbody>
-        </table>
+                <td className="px-3 py-2"></td>
+                <td className="px-3 py-2 text-right text-sm">
+                  {totalValue.toFixed(2)}
+                </td>
+                {products.map((p) => (
+                  <td
+                    key={p.id}
+                    className="px-1 py-2 text-center font-semibold text-sm"
+                  >
+                    {calculateProductTotal(p.id) || "-"}
+                  </td>
+                ))}
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div
+          className="sticky bottom-0 left-0 right-0 bg-white border-t border-gray-200 overflow-x-auto z-20"
+          style={{ height: "12px" }}
+        >
+          <div style={{ width: "100%", height: "100%" }} />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

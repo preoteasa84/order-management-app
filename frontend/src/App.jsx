@@ -18,11 +18,12 @@ import DataManagementScreen from "./pages/DataManagementScreen";
 
 const App = () => {
   // API Configuration
-  const API_URL = import.meta.env.VITE_API_URL || 'http://192.168.100.136:5000';
-  
+  const API_URL = import.meta.env.VITE_API_URL || "http://192.168.100.136:5000";
+
   // Auth state
   const [currentUser, setCurrentUser] = useState(null);
   const [activeSection, setActiveSection] = useState("dashboard");
+  const [editMode, setEditMode] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Data states
@@ -69,48 +70,58 @@ const App = () => {
   );
 
   // ✅ API-aware Storage - uses API for clients/products, localStorage for others
-    const loadData = async (key) => {
+  const loadData = async (key) => {
     try {
       // Use API for clients, products, agents, users, and zones
-      if (key === 'clients') {
+      if (key === "clients") {
         const response = await fetch(`${API_URL}/api/clients`);
         if (response.ok) {
           return await response.json();
         }
-        console.warn('API not available for clients, using localStorage fallback');
+        console.warn(
+          "API not available for clients, using localStorage fallback",
+        );
         const result = localStorage.getItem(key);
         return result ? JSON.parse(result) : null;
-      } else if (key === 'products') {
+      } else if (key === "products") {
         const response = await fetch(`${API_URL}/api/products`);
         if (response.ok) {
           return await response.json();
         }
-        console.warn('API not available for products, using localStorage fallback');
+        console.warn(
+          "API not available for products, using localStorage fallback",
+        );
         const result = localStorage.getItem(key);
         return result ? JSON.parse(result) : null;
-      } else if (key === 'agents') {
+      } else if (key === "agents") {
         const response = await fetch(`${API_URL}/api/agents`);
         if (response.ok) {
           const result = await response.json();
           return result.success ? result.data : [];
         }
-        console.warn('API not available for agents, using localStorage fallback');
+        console.warn(
+          "API not available for agents, using localStorage fallback",
+        );
         const result = localStorage.getItem(key);
         return result ? JSON.parse(result) : null;
-      } else if (key === 'users') {
+      } else if (key === "users") {
         const response = await fetch(`${API_URL}/api/users`);
         if (response.ok) {
           return await response.json();
         }
-        console.warn('API not available for users, using localStorage fallback');
+        console.warn(
+          "API not available for users, using localStorage fallback",
+        );
         const result = localStorage.getItem(key);
         return result ? JSON.parse(result) : null;
-      } else if (key === 'zones') {
+      } else if (key === "zones") {
         const response = await fetch(`${API_URL}/api/zones`);
         if (response.ok) {
           return await response.json();
         }
-        console.warn('API not available for zones, using localStorage fallback');
+        console.warn(
+          "API not available for zones, using localStorage fallback",
+        );
         const result = localStorage.getItem(key);
         return result ? JSON.parse(result) : null;
       } else {
@@ -124,19 +135,17 @@ const App = () => {
       return result ? JSON.parse(result) : null;
     }
   };
- 
-
 
   const saveData = async (key, data) => {
     try {
       // Use API for clients and products
-      if (key === 'clients') {
+      if (key === "clients") {
         // For clients, we need to handle both create and update operations
         // Since we're replacing the entire array, we need to sync all clients
         // This is not efficient but maintains compatibility with existing code
         localStorage.setItem(key, JSON.stringify(data)); // Keep localStorage as fallback
         return true;
-      } else if (key === 'products') {
+      } else if (key === "products") {
         // Same approach for products
         localStorage.setItem(key, JSON.stringify(data)); // Keep localStorage as fallback
         return true;
@@ -155,16 +164,16 @@ const App = () => {
   const createClient = async (client) => {
     try {
       const response = await fetch(`${API_URL}/api/clients`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(client)
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(client),
       });
       if (response.ok) {
         return await response.json();
       }
-      throw new Error('Failed to create client');
+      throw new Error("Failed to create client");
     } catch (error) {
-      console.error('Error creating client:', error);
+      console.error("Error creating client:", error);
       throw error;
     }
   };
@@ -172,16 +181,16 @@ const App = () => {
   const updateClient = async (id, client) => {
     try {
       const response = await fetch(`${API_URL}/api/clients/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(client)
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(client),
       });
       if (response.ok) {
         return await response.json();
       }
-      throw new Error('Failed to update client');
+      throw new Error("Failed to update client");
     } catch (error) {
-      console.error('Error updating client:', error);
+      console.error("Error updating client:", error);
       throw error;
     }
   };
@@ -189,14 +198,14 @@ const App = () => {
   const deleteClient = async (id) => {
     try {
       const response = await fetch(`${API_URL}/api/clients/${id}`, {
-        method: 'DELETE'
+        method: "DELETE",
       });
       if (response.ok) {
         return await response.json();
       }
-      throw new Error('Failed to delete client');
+      throw new Error("Failed to delete client");
     } catch (error) {
-      console.error('Error deleting client:', error);
+      console.error("Error deleting client:", error);
       throw error;
     }
   };
@@ -205,16 +214,16 @@ const App = () => {
   const createProduct = async (product) => {
     try {
       const response = await fetch(`${API_URL}/api/products`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(product)
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(product),
       });
       if (response.ok) {
         return await response.json();
       }
-      throw new Error('Failed to create product');
+      throw new Error("Failed to create product");
     } catch (error) {
-      console.error('Error creating product:', error);
+      console.error("Error creating product:", error);
       throw error;
     }
   };
@@ -222,16 +231,16 @@ const App = () => {
   const updateProduct = async (id, product) => {
     try {
       const response = await fetch(`${API_URL}/api/products/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(product)
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(product),
       });
       if (response.ok) {
         return await response.json();
       }
-      throw new Error('Failed to update product');
+      throw new Error("Failed to update product");
     } catch (error) {
-      console.error('Error updating product:', error);
+      console.error("Error updating product:", error);
       throw error;
     }
   };
@@ -239,14 +248,14 @@ const App = () => {
   const deleteProduct = async (id) => {
     try {
       const response = await fetch(`${API_URL}/api/products/${id}`, {
-        method: 'DELETE'
+        method: "DELETE",
       });
       if (response.ok) {
         return await response.json();
       }
-      throw new Error('Failed to delete product');
+      throw new Error("Failed to delete product");
     } catch (error) {
-      console.error('Error deleting product:', error);
+      console.error("Error deleting product:", error);
       throw error;
     }
   };
@@ -257,11 +266,11 @@ const App = () => {
       // Get current clients from API
       const response = await fetch(`${API_URL}/api/clients`);
       if (!response.ok) {
-        console.warn('API not available, skipping sync');
+        console.warn("API not available, skipping sync");
         return;
       }
       const existingClients = await response.json();
-      const existingIds = new Set(existingClients.map(c => c.id));
+      const existingIds = new Set(existingClients.map((c) => c.id));
 
       // Sync each client
       for (const client of clientsList) {
@@ -276,7 +285,7 @@ const App = () => {
         }
       }
     } catch (error) {
-      console.error('Error syncing clients:', error);
+      console.error("Error syncing clients:", error);
     }
   };
 
@@ -285,11 +294,11 @@ const App = () => {
       // Get current products from API
       const response = await fetch(`${API_URL}/api/products`);
       if (!response.ok) {
-        console.warn('API not available, skipping sync');
+        console.warn("API not available, skipping sync");
         return;
       }
       const existingProducts = await response.json();
-      const existingIds = new Set(existingProducts.map(p => p.id));
+      const existingIds = new Set(existingProducts.map((p) => p.id));
 
       // Sync each product
       for (const product of productsList) {
@@ -304,7 +313,7 @@ const App = () => {
         }
       }
     } catch (error) {
-      console.error('Error syncing products:', error);
+      console.error("Error syncing products:", error);
     }
   };
 
@@ -313,40 +322,40 @@ const App = () => {
       // Get current users from API
       const response = await fetch(`${API_URL}/api/users`);
       if (!response.ok) {
-        console.warn('API not available, skipping sync');
+        console.warn("API not available, skipping sync");
         return;
       }
       const existingUsers = await response.json();
-      const existingIds = new Set(existingUsers.map(u => u.id));
+      const existingIds = new Set(existingUsers.map((u) => u.id));
 
       // Sync each user
       for (const user of usersList) {
         try {
           // Create a copy of user without password for updates
           // Only include password for new users
-          const userToSync = existingIds.has(user.id) 
+          const userToSync = existingIds.has(user.id)
             ? { ...user, password: undefined } // Exclude password for updates
             : user; // Include password for new users
 
           if (existingIds.has(user.id)) {
             // Update existing user (without password to avoid overwriting hashed passwords)
             const response = await fetch(`${API_URL}/api/users/${user.id}`, {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(userToSync)
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(userToSync),
             });
             if (!response.ok) {
-              throw new Error('Failed to update user');
+              throw new Error("Failed to update user");
             }
           } else {
             // Create new user (with password)
             const response = await fetch(`${API_URL}/api/users`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(userToSync)
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(userToSync),
             });
             if (!response.ok) {
-              throw new Error('Failed to create user');
+              throw new Error("Failed to create user");
             }
           }
         } catch (error) {
@@ -354,7 +363,7 @@ const App = () => {
         }
       }
     } catch (error) {
-      console.error('Error syncing users:', error);
+      console.error("Error syncing users:", error);
     }
   };
 
@@ -363,13 +372,14 @@ const App = () => {
       // Get current agents from API
       const response = await fetch(`${API_URL}/api/agents`);
       if (!response.ok) {
-        console.warn('API not available, skipping sync');
+        console.warn("API not available, skipping sync");
         return;
       }
       const data = await response.json();
       // Handle wrapped response format from agents API
-      const existingAgents = (data.success && Array.isArray(data.data)) ? data.data : [];
-      const existingIds = new Set(existingAgents.map(a => a.id));
+      const existingAgents =
+        data.success && Array.isArray(data.data) ? data.data : [];
+      const existingIds = new Set(existingAgents.map((a) => a.id));
 
       // Sync each agent
       for (const agent of agentsList) {
@@ -377,22 +387,22 @@ const App = () => {
           if (existingIds.has(agent.id)) {
             // Update existing agent
             const response = await fetch(`${API_URL}/api/agents/${agent.id}`, {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(agent)
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(agent),
             });
             if (!response.ok) {
-              throw new Error('Failed to update agent');
+              throw new Error("Failed to update agent");
             }
           } else {
             // Create new agent
             const response = await fetch(`${API_URL}/api/agents`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(agent)
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(agent),
             });
             if (!response.ok) {
-              throw new Error('Failed to create agent');
+              throw new Error("Failed to create agent");
             }
           }
         } catch (error) {
@@ -400,7 +410,7 @@ const App = () => {
         }
       }
     } catch (error) {
-      console.error('Error syncing agents:', error);
+      console.error("Error syncing agents:", error);
     }
   };
 
@@ -409,11 +419,11 @@ const App = () => {
       // Get current orders from API
       const response = await fetch(`${API_URL}/api/orders`);
       if (!response.ok) {
-        console.warn('API not available, skipping sync');
+        console.warn("API not available, skipping sync");
         return;
       }
       const existingOrders = await response.json();
-      const existingIds = new Set(existingOrders.map(o => o.id));
+      const existingIds = new Set(existingOrders.map((o) => o.id));
 
       // Sync each order
       for (const order of ordersList) {
@@ -421,22 +431,22 @@ const App = () => {
           if (existingIds.has(order.id)) {
             // Update existing order
             const response = await fetch(`${API_URL}/api/orders/${order.id}`, {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(order)
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(order),
             });
             if (!response.ok) {
-              throw new Error('Failed to update order');
+              throw new Error("Failed to update order");
             }
           } else {
             // Create new order
             const response = await fetch(`${API_URL}/api/orders`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(order)
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(order),
             });
             if (!response.ok) {
-              throw new Error('Failed to create order');
+              throw new Error("Failed to create order");
             }
           }
         } catch (error) {
@@ -444,7 +454,7 @@ const App = () => {
         }
       }
     } catch (error) {
-      console.error('Error syncing orders:', error);
+      console.error("Error syncing orders:", error);
     }
   };
 
@@ -453,11 +463,11 @@ const App = () => {
       // Get current zones from API
       const response = await fetch(`${API_URL}/api/zones`);
       if (!response.ok) {
-        console.warn('API not available, skipping sync');
+        console.warn("API not available, skipping sync");
         return;
       }
       const existingZones = await response.json();
-      const existingIds = new Set(existingZones.map(z => z.id));
+      const existingIds = new Set(existingZones.map((z) => z.id));
 
       // Sync each zone
       for (const zone of zonesList) {
@@ -465,22 +475,22 @@ const App = () => {
           if (existingIds.has(zone.id)) {
             // Update existing zone
             const response = await fetch(`${API_URL}/api/zones/${zone.id}`, {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(zone)
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(zone),
             });
             if (!response.ok) {
-              throw new Error('Failed to update zone');
+              throw new Error("Failed to update zone");
             }
           } else {
             // Create new zone
             const response = await fetch(`${API_URL}/api/zones`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(zone)
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(zone),
             });
             if (!response.ok) {
-              throw new Error('Failed to create zone');
+              throw new Error("Failed to create zone");
             }
           }
         } catch (error) {
@@ -488,7 +498,7 @@ const App = () => {
         }
       }
     } catch (error) {
-      console.error('Error syncing zones:', error);
+      console.error("Error syncing zones:", error);
     }
   };
 
@@ -499,7 +509,7 @@ const App = () => {
 
   const loadAllData = async () => {
     try {
-      console.log('🔄 Loading all data...');
+      console.log("🔄 Loading all data...");
       const [
         companyData,
         gestiuniData,
@@ -526,12 +536,12 @@ const App = () => {
         loadData("dayStatus"),
       ]);
 
-      console.log('✅ Data loaded:', {
+      console.log("✅ Data loaded:", {
         agents: agentsData?.length || 0,
         zones: zonesData?.length || 0,
         priceZones: priceZonesData?.length || 0,
         clients: clientsData?.length || 0,
-        products: productsData?.length || 0
+        products: productsData?.length || 0,
       });
 
       setCompany(companyData || getDefaultCompany());
@@ -546,8 +556,8 @@ const App = () => {
       setContracts(contractsData || []);
       setOrders(ordersData || []);
       setDayStatus(dayStatusData || {});
-      
-      console.log('✅ State updated successfully');
+
+      console.log("✅ State updated successfully");
     } catch (error) {
       console.error("❌ Error loading data:", error);
     }
@@ -606,30 +616,30 @@ const App = () => {
     if (!client || !client.status) {
       return true; // Default to active if status is not set
     }
-    
+
     // Active clients are always active
-    if (client.status === 'active') {
+    if (client.status === "active") {
       return true;
     }
-    
+
     // Inactive clients are never active
-    if (client.status === 'inactive') {
+    if (client.status === "inactive") {
       return false;
     }
-    
+
     // Periodic clients - check date range
-    if (client.status === 'periodic') {
+    if (client.status === "periodic") {
       if (!client.activeFrom || !client.activeTo) {
         return false; // No date range set, treat as inactive
       }
-      
+
       // Use current date if dateString is not provided
-      const checkDate = dateString || new Date().toISOString().split('T')[0];
-      
+      const checkDate = dateString || new Date().toISOString().split("T")[0];
+
       // Check if checkDate is within the range (inclusive)
       return checkDate >= client.activeFrom && checkDate <= client.activeTo;
     }
-    
+
     // Unknown status, default to active
     return true;
   };
@@ -642,32 +652,32 @@ const App = () => {
     });
 
     const handleLogin = async () => {
-  try {
-    const response = await fetch(`${API_URL}/api/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        username: credentials.username,
-        password: credentials.password
-      })
-    });
+      try {
+        const response = await fetch(`${API_URL}/api/auth/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: credentials.username,
+            password: credentials.password,
+          }),
+        });
 
-    const data = await response.json();
+        const data = await response.json();
 
-    if (response.ok && data.user) {
-      setCurrentUser(data.user);
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      setActiveSection("dashboard");
-    } else {
-      console.error('Login error:', data.error);
-      alert(data.error || 'Login failed');
-    }
-  } catch (error) {
-    console.error('Login error:', error);
-    alert('Login failed: ' + error.message);
-  }
-};
+        if (response.ok && data.user) {
+          setCurrentUser(data.user);
+          localStorage.setItem("token", data.token);
+          localStorage.setItem("user", JSON.stringify(data.user));
+          setActiveSection("dashboard");
+        } else {
+          console.error("Login error:", data.error);
+          alert(data.error || "Login failed");
+        }
+      } catch (error) {
+        console.error("Login error:", error);
+        alert("Login failed: " + error.message);
+      }
+    };
 
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center p-4">
@@ -864,10 +874,23 @@ const App = () => {
             saveData={saveData}
             getClientProductPrice={getClientProductPrice}
             isClientActive={isClientActive}
+            editMode={editMode}
+            setEditMode={setEditMode}
           />
         );
       case "reports":
-        return <ReportsScreen />;
+        return (
+          <ReportsScreen
+            orders={orders}
+            clients={clients}
+            products={products}
+            agents={agents}
+            selectedDate={selectedDate}
+            setSelectedDate={setSelectedDate}
+            currentUser={currentUser}
+            showMessage={showMessage}
+          />
+        );
       case "agents":
         return (
           <AgentManager
@@ -924,21 +947,25 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <Header 
+      <Header
         currentUser={currentUser}
         setCurrentUser={setCurrentUser}
         mobileMenuOpen={mobileMenuOpen}
         setMobileMenuOpen={setMobileMenuOpen}
       />
       <div className="flex overflow-hidden">
-        <Navigation 
-          currentUser={currentUser}
-          activeSection={activeSection}
-          setActiveSection={setActiveSection}
-          mobileMenuOpen={mobileMenuOpen}
-          setMobileMenuOpen={setMobileMenuOpen}
-        />
-        <div className="flex-1 overflow-x-auto p-4 sm:p-6 pb-20 lg:pb-6">
+        {!editMode && (
+          <Navigation
+            currentUser={currentUser}
+            activeSection={activeSection}
+            setActiveSection={setActiveSection}
+            mobileMenuOpen={mobileMenuOpen}
+            setMobileMenuOpen={setMobileMenuOpen}
+          />
+        )}
+        <div
+          className={`${editMode ? "w-full" : "flex-1"} overflow-x-auto p-4 sm:p-6 pb-20 lg:pb-6`}
+        >
           {message && (
             <div
               className={`mb-4 p-4 rounded-lg ${
@@ -958,6 +985,5 @@ const App = () => {
     </div>
   );
 };
-
 
 export default App;

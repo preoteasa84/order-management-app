@@ -79,7 +79,7 @@ const DataManagementScreen = ({ API_URL, showMessage, zones }) => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ csvData: csv, preview: true })
+        body: JSON.stringify({ csvData: csv, preview: true, overwrite: true })
       });
 
       const result = await response.json();
@@ -121,7 +121,7 @@ const DataManagementScreen = ({ API_URL, showMessage, zones }) => {
               'Content-Type': 'application/json',
               'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({ csvData: csv, preview: false })
+            body: JSON.stringify({ csvData: csv, preview: false, overwrite: true })
           });
 
           const result = await response.json();
