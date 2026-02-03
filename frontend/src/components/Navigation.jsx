@@ -10,7 +10,8 @@ import {
   Home,
   Menu,
   UserCog,
-  Database
+  Database,
+  MapPin
 } from 'lucide-react';
 
 const Navigation = ({ currentUser, activeSection, setActiveSection, mobileMenuOpen, setMobileMenuOpen }) => {
@@ -74,6 +75,12 @@ const Navigation = ({ currentUser, activeSection, setActiveSection, mobileMenuOp
       label: "Gestiune Date",
       icon: Database,
       roles: ["admin"],
+    },
+	{
+      id: "agent-map",
+      label: "📍 Hartă Agenți",
+      icon: MapPin,  // ← trebuie importat
+      roles: ["admin", "birou"],
     },
     { id: "config", label: "Configurare", icon: Settings, roles: ["admin"] },
     {

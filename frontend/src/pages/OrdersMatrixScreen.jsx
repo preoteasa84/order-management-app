@@ -18,13 +18,17 @@ const OrdersMatrixScreen = ({
   saveData,
   getClientProductPrice,
   isClientActive,
-  editMode,              
-  setEditMode: setEditModeFromApp,  
+  editMode,
+  setEditMode: setEditModeFromApp,
 }) => {
   const isDayClosed = dayStatus[selectedDate]?.productionExported || false;
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedAgent, setSelectedAgent] = useState("all");
+  // ✅ DUPA - Cauta agentul "Nealocat"
+  const [selectedAgent, setSelectedAgent] = useState(() => {
+    const unallocatedAgent = agents.find((a) => a.name === "Nealocat");
+    return unallocatedAgent?.id || "all";
+  });
   const [matrixData, setMatrixData] = useState({});
   const canEdit = !isDayClosed || currentUser.role === "admin";
 
@@ -379,7 +383,10 @@ const OrdersMatrixScreen = ({
       <div className="bg-white rounded-lg shadow">
         <div className="overflow-x-auto" style={{ maxHeight: "113vh" }}>
           <table className="w-full text-sm">
-            <thead className="sticky top-0 bg-gray-50 z-30" style={{ top: "0" }}>
+            <thead
+              className="sticky top-0 bg-gray-50 z-30"
+              style={{ top: "0" }}
+            >
               <tr>
                 <th className="px-3 py-2 text-left font-semibold sticky left-0 bg-gray-50 z-10">
                   Client
@@ -510,7 +517,7 @@ const OrdersMatrixScreen = ({
                         </div>
                       )}
                     </td>
-                   <td className="px-1 py-2 text-right font-semibold text-sm">
+                    <td className="px-1 py-2 text-right font-semibold text-sm">
                       {total > 0 ? total.toFixed(2) : "-"}
                     </td>
                     {products.map((p) => {

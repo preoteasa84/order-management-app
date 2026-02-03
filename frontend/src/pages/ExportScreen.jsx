@@ -38,10 +38,7 @@ const ExportScreen = ({
   // ✅ Generare XML Facturi
   const generateInvoicesXML = () => {
     if (invoiceOrders.length === 0) {
-      showMessage(
-        "Nu sunt facturi neexportate pentru această dată! ",
-        "error",
-      );
+      showMessage("Nu sunt facturi neexportate pentru această dată! ", "error");
       return;
     }
 
@@ -156,10 +153,7 @@ const ExportScreen = ({
   // ✅ Generare XML Chitanțe
   const generateReceiptsXML = () => {
     if (receiptOrders.length === 0) {
-      showMessage(
-        "Nu sunt chitanțe neexportate pentru această dată!",
-        "error",
-      );
+      showMessage("Nu sunt chitanțe neexportate pentru această dată!", "error");
       return;
     }
 
@@ -212,14 +206,17 @@ const ExportScreen = ({
   };
 
   // ✅ Download fișier
-  const downloadFile = (content, filename) => {
+  const downloadFile = (content, filename, mimeType = "text/plain") => {
     const element = document.createElement("a");
-    const file = new Blob([content], { type: "text/plain" });
+    const file = new Blob([content], { type: mimeType });
     element.href = URL.createObjectURL(file);
     element.download = filename;
+    element.setAttribute("download", filename); // ← ADAUGĂ
+    element.style.display = "none"; // ← ADAUGĂ
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
+    URL.revokeObjectURL(element.href); // ← ADAUGĂ (free memory)
   };
 
   // ✅ Export Facturi
@@ -231,7 +228,7 @@ const ExportScreen = ({
     const currentExport = (exportCount[selectedDate] || 0) + 1;
     const filename = `f_${company.furnizorCIF.replace("RO", "")}_${currentExport}_${day}-${month}-${year}.XML`;
 
-    downloadFile(xml, filename);
+    downloadFile(xml, filename, "application/xml");
 
     // ✅ Mark invoices as exported
     const updatedOrders = orders.map((o) =>
@@ -259,7 +256,7 @@ const ExportScreen = ({
     const currentExport = (exportCount[selectedDate] || 0) + 1;
     const filename = `I_${company.furnizorCIF.replace("RO", "")}_${currentExport}_${day}-${month}-${year}.XML`;
 
-    downloadFile(xml, filename);
+    downloadFile(xml, filename, "application/xml"); // ← SCHIMBĂ
 
     // ✅ Mark receipts as exported
     const updatedOrders = orders.map((o) =>
@@ -289,7 +286,7 @@ const ExportScreen = ({
     const [year, month, day] = selectedDate.split("-");
     const filename = `p_${company.furnizorCIF.replace("RO", "")}_${day}-${month}-${year}.CSV`;
 
-    downloadFile(csv, filename);
+    downloadFile(csv, filename, "text/csv"); // ← SCHIMBĂ
 
     // ✅ Auto-close day
     const updatedDayStatus = {
@@ -344,9 +341,7 @@ const ExportScreen = ({
 
       {/* MOD EXPORT */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <h3 className="text-sm font-semibold text-blue-900 mb-3">
-          Mod Export
-        </h3>
+        <h3 className="text-sm font-semibold text-blue-900 mb-3">Mod Export</h3>
         <div className="flex gap-4">
           <label className="flex items-center gap-2 cursor-pointer">
             <input
@@ -480,8 +475,8 @@ const ExportScreen = ({
             🔓 Redeschide Ziua
           </h3>
           <p className="text-sm text-red-700 mb-4">
-            Ziua {selectedDate} este închisă. Doar admin poate redeschide
-            pentru modificări.
+            Ziua {selectedDate} este închisă. Doar admin poate redeschide pentru
+            modificări.
           </p>
           <button
             onClick={handleReopenDay}

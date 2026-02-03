@@ -1,39 +1,12 @@
-# Dependencies
 node_modules/
-frontend/node_modules/
-server/node_modules/
-
-# Build outputs
-dist/
-frontend/dist/
-build/
-
-# Database
-*.db
-*.db-journal
-*.db-shm
-*.db-wal
-
-# Logs
-*.log
-logs/
-
-# Environment files
+.env
 .env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# OS files
+dist/
+build/
 .DS_Store
-Thumbs.db
-
-# IDE files
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# Temp files
-/tmp/
-*.tmp
+.vite/
+certs/
+*.db
+*.backup
+server_temp.js
+server/.gitignore

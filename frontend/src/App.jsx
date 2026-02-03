@@ -15,10 +15,12 @@ import ContractsScreen from "./pages/ContractsScreen";
 import AgentManager from "./pages/AgentManager";
 import UserManager from "./pages/UserManager";
 import DataManagementScreen from "./pages/DataManagementScreen";
+import AgentMapScreen from "./pages/AgentMapScreen";
 
 const App = () => {
   // API Configuration
-  const API_URL = import.meta.env.VITE_API_URL || "http://192.168.100.136:5000";
+  const API_URL =
+    import.meta.env.VITE_API_URL || "https://192.168.100.136:5000";
 
   // Auth state
   const [currentUser, setCurrentUser] = useState(null);
@@ -39,27 +41,6 @@ const App = () => {
   const [contracts, setContracts] = useState([]);
   const [dayStatus, setDayStatus] = useState({});
 
-  // ✅ ADAUGĂ AICI - după toți useState-urile:
-  useEffect(() => {
-    const loadAllData = async () => {
-      // ... cod existent...
-    };
-    loadAllData();
-  }, []);
-
-  // ✅ ADAUGĂ ȘI ASTA - după useEffect-ul de loadAllData:
-  useEffect(() => {
-    const handleStorageChange = (e) => {
-      if (e.key === "dayStatus") {
-        const updated = e.newValue ? JSON.parse(e.newValue) : {};
-        setDayStatus(updated);
-      }
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
-  }, []);
-
   // UI states
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
@@ -68,6 +49,13 @@ const App = () => {
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().split("T")[0],
   );
+
+  // ✅ ADAUGĂ AICI - pentru tracking status
+  const [gpsStatus, setGpsStatus] = useState({
+    isTracking: false,
+    lastUpdate: null,
+    error: null,
+  });
 
   // ✅ API-aware Storage - uses API for clients/products, localStorage for others
   const loadData = async (key) => {
@@ -507,6 +495,19 @@ const App = () => {
     loadAllData();
   }, []);
 
+  // ✅ HANDLE STORAGE CHANGES (tab visibility)
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === "dayStatus") {
+        const updated = e.newValue ? JSON.parse(e.newValue) : {};
+        setDayStatus(updated);
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
   const loadAllData = async () => {
     try {
       console.log("🔄 Loading all data...");
@@ -644,6 +645,169 @@ const App = () => {
     return true;
   };
 
+  // ✅ REFACTORED: GPS Tracking helper function
+  const startGPSTracking = (agentId, userName) => {
+    console.log("🎯 Starting GPS tracking for agent:", agentId);
+
+    if (!("geolocation" in navigator)) {
+      console.error("❌ Geolocation not available");
+      setGpsStatus({
+        isTracking: false,
+        lastUpdate: null,
+        error: "Geolocation not available",
+      });
+      return null;
+    }
+
+    // Helper function - refolosibil
+    const sendLocationToServer = async (latitude, longitude, accuracy) => {
+      try {
+        const response = await fetch(
+          `${API_URL}/api/agents/${agentId}/location`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              latitude,
+              longitude,
+              accuracy,
+              agentName: userName || `Agent ${agentId}`,
+            }),
+            keepalive: true, // ✅ IMPORTANT - ține conexiunea deschisă
+          }
+        );
+
+        if (response.ok) {
+          console.log(
+            "✅ Location sent:",
+            latitude.toFixed(4),
+            longitude.toFixed(4)
+          );
+          setGpsStatus({
+            isTracking: true,
+            lastUpdate: new Date().toLocaleTimeString("ro-RO"),
+            error: null,
+          });
+          return true;
+        } else {
+          console.error("❌ Server error:", response.status);
+          return false;
+        }
+      } catch (error) {
+        console.error("❌ Fetch error:", error);
+        setGpsStatus({
+          isTracking: false,
+          lastUpdate: null,
+          error: error.message,
+        });
+        return false;
+      }
+    };
+
+    // Callback pentru succes GPS
+    const onPositionSuccess = async (position) => {
+      const { latitude, longitude, accuracy } = position.coords;
+      console.log(
+        `📍 Position: ${latitude.toFixed(4)}, ${longitude.toFixed(4)} (±${Math.round(accuracy)}m)`
+      );
+
+      await sendLocationToServer(latitude, longitude, accuracy);
+    };
+
+    // Callback pentru eroare GPS
+    const onPositionError = (error) => {
+      console.error("❌ GPS error:", {
+        code: error.code,
+        message: error.message,
+      });
+
+      setGpsStatus({
+        isTracking: false,
+        lastUpdate: null,
+        error: error.message,
+      });
+
+      // Retry după 5 secunde dacă nu e permission denied
+      if (error.code !== 1) {
+        console.log("⚠️ Retrying GPS in 5s...");
+        setTimeout(() => {
+          navigator.geolocation.getCurrentPosition(
+            onPositionSuccess,
+            onPositionError,
+            gpxOptions
+          );
+        }, 5000);
+      }
+    };
+
+    // Opțiuni GPS optimizate
+    const gpxOptions = {
+      enableHighAccuracy: true,
+      timeout: 15000, // ✅ CRESCUT de la 10000
+      maximumAge: 0, // Nu folosi cached position
+    };
+
+    console.log("✅ Requesting geolocation permission...");
+
+    // ✅ TRIMITE IMEDIAT la start
+    navigator.geolocation.getCurrentPosition(
+      onPositionSuccess,
+      onPositionError,
+      gpxOptions
+    );
+
+    // ✅ POLLING - fiecare 30 secunde
+    let trackingInterval = setInterval(() => {
+      console.log("⏰ GPS polling tick...");
+
+      navigator.geolocation.getCurrentPosition(
+        onPositionSuccess,
+        onPositionError,
+        gpxOptions
+      );
+    }, 30000); // 30 secunde
+
+    // ✅ KEEPALIVE - dacă tab e hidden, restart tracking
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        console.log("🔄 Tab became visible - refreshing tracking");
+        navigator.geolocation.getCurrentPosition(
+          onPositionSuccess,
+          onPositionError,
+          gpxOptions
+        );
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    // ✅ Salveaza interval globally
+    window.trackingInterval = trackingInterval;
+    window.visibilityListener = handleVisibilityChange;
+
+    setGpsStatus({
+      isTracking: true,
+      lastUpdate: new Date().toLocaleTimeString("ro-RO"),
+      error: null,
+    });
+
+    console.log("⏰ Tracking started - polling every 30s");
+
+    // ✅ Return cleanup function
+    return () => {
+      if (window.trackingInterval) {
+        clearInterval(window.trackingInterval);
+        document.removeEventListener("visibilitychange", handleVisibilityChange);
+        setGpsStatus({
+          isTracking: false,
+          lastUpdate: null,
+          error: null,
+        });
+        console.log("🛑 Tracking stopped");
+      }
+    };
+  };
+
   // ✅ FIXED: Login component
   const LoginScreen = () => {
     const [credentials, setCredentials] = useState({
@@ -668,7 +832,18 @@ const App = () => {
           setCurrentUser(data.user);
           localStorage.setItem("token", data.token);
           localStorage.setItem("user", JSON.stringify(data.user));
+          localStorage.setItem("userName", credentials.username);
           setActiveSection("dashboard");
+
+          // ✅ INIȚIAZĂ TRACKING PENTRU AGENT
+          if (data.user.role === "agent") {
+            const cleanup = startGPSTracking(
+              data.user.id,
+              credentials.username
+            );
+            // Salveaza cleanup function globally
+            window.cleanupGPSTracking = cleanup;
+          }
         } else {
           console.error("Login error:", data.error);
           alert(data.error || "Login failed");
@@ -677,6 +852,17 @@ const App = () => {
         console.error("Login error:", error);
         alert("Login failed: " + error.message);
       }
+    };
+
+    const handleLogout = () => {
+      // Cleanup GPS tracking
+      if (window.cleanupGPSTracking) {
+        window.cleanupGPSTracking();
+      }
+      setCurrentUser(null);
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      localStorage.removeItem("userName");
     };
 
     return (
@@ -703,7 +889,7 @@ const App = () => {
                 onChange={(e) =>
                   setCredentials({ ...credentials, username: e.target.value })
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus: ring-amber-500 focus: border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
                 placeholder="Username"
               />
             </div>
@@ -811,12 +997,14 @@ const App = () => {
             setCompany={setCompany}
             gestiuni={gestiuni}
             agents={agents}
+            setAgents={setAgents}
             zones={zones}
             setZones={setZones}
             priceZones={priceZones}
             setPriceZones={setPriceZones}
             products={products}
             clients={clients}
+            setClients={setClients}
             contracts={contracts}
             orders={orders}
             dayStatus={dayStatus}
@@ -902,6 +1090,14 @@ const App = () => {
             API_URL={API_URL}
           />
         );
+      case "agent-map":
+        return (
+          <AgentMapScreen
+            agents={agents}
+            API_URL={API_URL}
+            currentUser={currentUser}
+          />
+        );
       case "users":
         return (
           <UserManager
@@ -952,6 +1148,7 @@ const App = () => {
         setCurrentUser={setCurrentUser}
         mobileMenuOpen={mobileMenuOpen}
         setMobileMenuOpen={setMobileMenuOpen}
+        gpsStatus={gpsStatus}
       />
       <div className="flex overflow-hidden">
         {!editMode && (
