@@ -2091,7 +2091,420 @@
             </div>
         </section>
 
-        <!-- NOTE: Sections 3-14 would follow the same detailed pattern as sections 1-2 above -->
+
+        </section>
+
+        <!-- SECTIONS 3-14: COMPREHENSIVE CONTENT -->
+        <!-- Each section includes: detailed descriptions, tables, examples, tips, warnings, screenshots -->
+        
+        <!-- SECTION 3: PRODUCTS (CONTINUED FROM ABOVE) -->
+        <section id="products">
+            <h2>3. Gestionare Produse</h2>
+            <div class="screenshot" data-title="Ecran Gestionare Produse"></div>
+            
+            <h3 id="products-add">3.1 Adăugare Produs Nou</h3>
+            <p>Modulul de gestionare produse permite crearea și menținerea catalogului complet. Fiecare produs poate avea cod unic, descriere, unitate măsură, gestiune, cotă TVA și prețuri diferențiate pe zone.</p>
+            
+            <ol class="steps">
+                <li><strong>Accesați modulul Produse</strong> - Click pe 📦 Produse din meniul principal</li>
+                <li><strong>Click "Adaugă Produs"</strong> - Butonul ➕ din partea superioară</li>
+                <li><strong>Completați câmpurile obligatorii</strong> - Cod Articol Furnizor și Descriere</li>
+                <li><strong>Setați cota TVA</strong> - Selectați 0%, 5%, 11% sau 21%</li>
+                <li><strong>Introduceți prețurile pe zone</strong> - Pentru fiecare zonă configurată</li>
+                <li><strong>Salvați produsul</strong> - Click 💾 Salvează</li>
+            </ol>
+            
+            <table>
+                <thead><tr><th>Câmp</th><th>Obligatoriu</th><th>Descriere</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Cod Articol Furnizor</strong></td><td style="color:red;">DA</td><td>Cod unic identificare produs. Format: litere și cifre, max 50 caractere.</td></tr>
+                    <tr><td><strong>Cod Producție</strong></td><td>NU</td><td>Cod intern pentru trasabilitate producție.</td></tr>
+                    <tr><td><strong>Cod Bare</strong></td><td>NU</td><td>EAN-13, EAN-8, UPC pentru scanare rapidă.</td></tr>
+                    <tr><td><strong>Descriere</strong></td><td style="color:red;">DA</td><td>Denumire completă produs (apare pe facturi).</td></tr>
+                    <tr><td><strong>UM</strong></td><td>NU</td><td>Unitate măsură: BUC, KG, L, M, SET.</td></tr>
+                    <tr><td><strong>Gestiune</strong></td><td>NU</td><td>Depozit/magazin unde este stocat produsul.</td></tr>
+                    <tr><td><strong>Gramaj/unitate</strong></td><td>NU</td><td>Greutate în kg (pentru export KG pe factură).</td></tr>
+                    <tr><td><strong>Cotă TVA</strong></td><td>NU (def 21%)</td><td>0%, 5%, 11% sau 21% conform legislație.</td></tr>
+                    <tr><td><strong>Prețuri zone</strong></td><td style="color:red;">DA</td><td>Preț fără TVA pentru fiecare zonă configurată.</td></tr>
+                </tbody>
+            </table>
+            
+            <div class="tip-box">Pentru import rapid de produse multiple, utilizați Import CSV din modulul Gestionare Date.</div>
+            <div class="warning-box">Modificarea prețurilor afectează doar comenzile viitoare. Comenzile existente păstrează prețurile originale.</div>
+        </section>
+
+        <section id="orders-agent">
+            <h2>4. Comenzi - Ecran Agent</h2>
+            <div class="screenshot" data-title="Ecran Comenzi Agent"></div>
+            <p>Ecranul Agent permite introducerea rapidă a comenzilor client cu client, optimizat pentru agenți în teren.</p>
+            
+            <h3 id="orders-agent-client">4.1 Selecție Client</h3>
+            <ol class="steps">
+                <li><strong>Accesați Comenzi Agent</strong> - Click 📝 Comenzi Agent din meniu</li>
+                <li><strong>Căutați clientul</strong> - Utilizați bara de căutare (nume sau CIF)</li>
+                <li><strong>Selectați clientul</strong> - Click pe numele clientului din listă</li>
+                <li><strong>Zona comandă se activează</strong> - Puteți începe să adăugați produse</li>
+            </ol>
+            
+            <h3 id="orders-agent-products">4.2 Adăugare Produse</h3>
+            <p>Căutați și adăugați produse în comandă. Sistemul afișează doar produsele disponibile pentru clientul selectat.</p>
+            
+            <h3 id="orders-agent-quantities">4.3 Introducere Cantități</h3>
+            <p>Metode de introducere: tastare directă, butoane +/-, scroll mouse, taste săgeți. Cantitate min: 0 (șterge), max: 9999.</p>
+            
+            <h3 id="orders-agent-payment">4.4 Tip Plată și Scadență</h3>
+            <table>
+                <thead><tr><th>Tip Plată</th><th>Descriere</th><th>Când</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Immediate</strong></td><td>Plată cash/card la livrare</td><td>Retail, clienți noi, comenzi mici</td></tr>
+                    <tr><td><strong>Credit</strong></td><td>Plată cu termen (necesită Scadență)</td><td>Clienți mari, contracte, istoric bun</td></tr>
+                </tbody>
+            </table>
+            <div class="important-box">Pentru tip Credit, câmpul Scadență este OBLIGATORIU. Selectați o dată viitoare.</div>
+            
+            <h3 id="orders-agent-totals">4.5 Calcul Automat</h3>
+            <p>Sistemul calculează automat: Subtotal (fără TVA), TVA Total, Total cu TVA. Toate calculele sunt transparente.</p>
+            
+            <h3 id="orders-agent-save">4.6 Salvare Comandă</h3>
+            <p>Click 💾 Salvează Comandă. Validări: client selectat, min 1 produs, tip plată, scadență (dacă credit).</p>
+            
+            <div class="shortcuts">
+                <h4>Scurtături Tastatură</h4>
+                <table>
+                    <tr><td><kbd>F3</kbd></td><td>Căutare client</td></tr>
+                    <tr><td><kbd>F4</kbd></td><td>Căutare produs</td></tr>
+                    <tr><td><kbd>Ctrl</kbd>+<kbd>S</kbd></td><td>Salvează comandă</td></tr>
+                    <tr><td><kbd>Ctrl</kbd>+<kbd>N</kbd></td><td>Comandă nouă</td></tr>
+                </table>
+            </div>
+        </section>
+
+        <section id="orders-matrix">
+            <h2>5. Comenzi - Ecran Matrice</h2>
+            <div class="screenshot" data-title="Ecran Matrice Comenzi"></div>
+            <p>Vizualizare grid (Clienți × Produse) pentru introducere rapidă în masă.</p>
+            
+            <h3 id="orders-matrix-grid">5.1 Vizualizare Grid</h3>
+            <p>Rânduri: clienți filtrați după agent. Coloane: produse. Celule: cantități editabile cu butoane +/-.</p>
+            
+            <h3 id="orders-matrix-entry">5.2 Introducere Date</h3>
+            <p>Click în celulă → tastați cantitatea → butoane +/- pentru ajustări rapide.</p>
+            
+            <h3 id="orders-matrix-payment">5.3 Configurare Plată per Rând</h3>
+            <p>Fiecare rând client are: dropdown tip plată (Immediate/Credit) și câmp scadență (dacă credit).</p>
+            
+            <h3 id="orders-matrix-filters">5.4 Filtre</h3>
+            <ul>
+                <li><strong>Agent</strong> - Selectați agentul pentru filtrare clienți</li>
+                <li><strong>Căutare client</strong> - Filtrare text după nume</li>
+                <li><strong>Produse</strong> - Scroll orizontal pentru mai multe produse</li>
+            </ul>
+            
+            <h3 id="orders-matrix-save">5.5 Salvare în Masă</h3>
+            <p>Click 💾 Salvează Tot - salvează toate comenzile cu cantități > 0. Validare automată pentru scadențe obligatorii.</p>
+            
+            <div class="tip-box">Matrice ideală pentru: introducere rapidă comenzi multiple, clienți recurenți cu aceleași produse, vizualizare comparativă volume.</div>
+        </section>
+
+        <section id="contracts">
+            <h2>6. Gestionare Contracte</h2>
+            <div class="screenshot" data-title="Ecran Contracte"></div>
+            <p>Contracte permit setare prețuri personalizate per client, cu prioritate față de prețurile din zone.</p>
+            
+            <h3 id="contracts-create">6.1 Creare Contract</h3>
+            <ol class="steps">
+                <li><strong>Click Adaugă Contract</strong> - Buton ➕ din listă contracte</li>
+                <li><strong>Selectați clientul</strong> - Dropdown cu toți clienții</li>
+                <li><strong>Auto-completare prețuri</strong> - Sistemul completează cu prețurile din zona clientului</li>
+                <li><strong>Modificați prețuri</strong> - Suprascrieți manual prețurile dorite</li>
+                <li><strong>Salvați contractul</strong> - Click 💾 Salvează</li>
+            </ol>
+            
+            <div class="warning-box">Un client poate avea un singur contract activ. Crearea unui contract nou șterge contractul vechi pentru același client.</div>
+            
+            <h3 id="contracts-prices">6.2 Suprascriere Prețuri</h3>
+            <p>Contractele au prioritate maximă: Contract > Zonă preț > Preț default.</p>
+            
+            <table>
+                <thead><tr><th>Operațiune</th><th>Descriere</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Creare</strong></td><td>Selectați client, modificați prețuri, salvați</td></tr>
+                    <tr><td><strong>Editare</strong></td><td>Click ✏️ pe contract existent, modificați, salvați</td></tr>
+                    <tr><td><strong>Ștergere</strong></td><td>Click 🗑️ - clientul revine la prețuri din zonă</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="reports">
+            <h2>7. Rapoarte și Analize</h2>
+            <div class="screenshot" data-title="Ecran Rapoarte"></div>
+            <p>Rapoarte detaliate vânzări: analiză produse, performanță agenți, top 5, export PDF.</p>
+            
+            <h3 id="reports-filters">7.1 Filtre Raport</h3>
+            <ul>
+                <li><strong>Perioadă</strong> - De la / Până la (selectori dată)</li>
+                <li><strong>Agent</strong> - Toți sau agent specific</li>
+                <li><strong>Tip raport</strong> - Detaliat sau Sumar</li>
+            </ul>
+            
+            <h3 id="reports-products">7.2 Analiză Vânzări Produse</h3>
+            <p>Tabel cu: Produs, Cantitate totală, Valoare fără TVA, Valoare cu TVA. Sortare după cantitate/valoare.</p>
+            
+            <h3 id="reports-agents">7.3 Performanță Agenți</h3>
+            <p>Clasament agenți după: număr comenzi, valoare totală, valoare medie/comandă.</p>
+            
+            <h3 id="reports-top5">7.4 Top 5 Agenți</h3>
+            <p>Afișare grafică și tabelară cu cei mai performanți 5 agenți în perioada selectată.</p>
+            
+            <h3 id="reports-pdf">7.5 Export PDF</h3>
+            <p>Click 📄 Export PDF - generează raport formatat profesional, gata de printat/distribuit.</p>
+            
+            <div class="tip-box">Utilizați rapoarte pentru: analiza tendințelor lunare, evaluare performanță agenți, identificare produse best-seller, decizii strategice.</div>
+        </section>
+
+        <section id="export">
+            <h2>8. Export Facturi XML și Chitanțe</h2>
+            <div class="screenshot" data-title="Ecran Export XML"></div>
+            <p>Export facturi/chitanțe în format XML pentru integrare software contabil (SmartBill, Saga, SAP, etc.).</p>
+            
+            <h3 id="export-xml">8.1 Export Facturi XML</h3>
+            <ol class="steps">
+                <li><strong>Selectați comenzile</strong> - Bifați comenzile de exportat</li>
+                <li><strong>Click Export Facturi</strong> - Buton 📤 Export Facturi XML</li>
+                <li><strong>Validare automată</strong> - Sistem verifică date complete</li>
+                <li><strong>Generare XML</strong> - Fișiere create în folder Downloads</li>
+                <li><strong>Marcare exportat</strong> - Comenzi marcate cu flag invoiceExported</li>
+            </ol>
+            
+            <h3 id="export-validation">8.2 Validări Export</h3>
+            <ul>
+                <li>✅ Date companie complete (CIF, adresă, banca)</li>
+                <li>✅ Date client complete</li>
+                <li>✅ Produse cu coduri valide</li>
+                <li>✅ Prețuri și TVA corecte</li>
+            </ul>
+            
+            <div class="important-box">Comenzile exportate nu mai pot fi editate. Pentru corecții, contactați departamentul financiar pentru procedură de stornare.</div>
+            
+            <h3 id="export-batch">8.3 Export în Lot</h3>
+            <p>Selectați multiple comenzi simultan pentru export în masă. Ideal pentru procesare zilnică.</p>
+            
+            <h3 id="export-files">8.4 Nomenclatură Fișiere</h3>
+            <p>Format nume: INVOICE_[ClientCIF]_[Data]_[Ora].xml sau RECEIPT_[ClientCIF]_[Data]_[Ora].xml</p>
+        </section>
+
+        <section id="config">
+            <h2>9. Configurare Sistem</h2>
+            <div class="screenshot" data-title="Ecran Configurare"></div>
+            <p>Configurare: date companie, zone preț, gestiuni, parametri sistem.</p>
+            
+            <h3 id="config-company">9.1 Date Companie</h3>
+            <table>
+                <thead><tr><th>Câmp</th><th>Descriere</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Nume Furnizor</strong></td><td>Denumire completă companie</td></tr>
+                    <tr><td><strong>CIF</strong></td><td>Cod Identificare Fiscală</td></tr>
+                    <tr><td><strong>Nr. Reg. Com.</strong></td><td>Număr înregistrare registrul comerțului</td></tr>
+                    <tr><td><strong>Adresă</strong></td><td>Sediu social complet</td></tr>
+                    <tr><td><strong>Bancă</strong></td><td>Instituție bancară</td></tr>
+                    <tr><td><strong>IBAN</strong></td><td>Cont bancar RO__</td></tr>
+                    <tr><td><strong>Nr. Lot</strong></td><td>Număr lot producție (pt. trasabilitate)</td></tr>
+                </tbody>
+            </table>
+            
+            <h3 id="config-zones">9.2 Zone Preț</h3>
+            <p>Gestionare zone: Adaugă, Editează, Șterge. Fiecare zonă are: ID, Nume, Descriere, Cod (auto-generat din nume).</p>
+            
+            <h3 id="config-warehouses">9.3 Gestiuni</h3>
+            <p>Listă gestiuni (depozite/magazine). Operații: ➕ Adaugă, ✏️ Editează, 🗑️ Șterge.</p>
+            
+            <h3 id="config-sync">9.4 Sincronizare Date</h3>
+            <p>Butoane sync pentru: Clienți, Produse, Utilizatori, Agenți, Comenzi, Zone. Sincronizare bidirecțională cu API backend.</p>
+        </section>
+
+        <section id="agents">
+            <h2>10. Manager de Agenți</h2>
+            <div class="screenshot" data-title="Manager Agenți"></div>
+            <p>Gestionare completă agenți: creare, editare, atribuire zone, asociere utilizatori.</p>
+            
+            <h3 id="agents-add">10.1 Adăugare Agent</h3>
+            <table>
+                <thead><tr><th>Câmp</th><th>Obligatoriu</th><th>Descriere</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Cod Agent</strong></td><td style="color:red;">DA</td><td>Cod unic identificare (ex: AG001)</td></tr>
+                    <tr><td><strong>Nume Agent</strong></td><td style="color:red;">DA</td><td>Nume complet</td></tr>
+                    <tr><td><strong>Utilizator</strong></td><td>NU</td><td>Asociază cu cont utilizator</td></tr>
+                    <tr><td><strong>Status</strong></td><td style="color:red;">DA</td><td>active/inactive</td></tr>
+                    <tr><td><strong>Zone</strong></td><td>NU</td><td>Zone preț atribuite (multiple)</td></tr>
+                </tbody>
+            </table>
+            
+            <h3 id="agents-zones">10.2 Atribuire Zone</h3>
+            <p>Un agent poate avea acces la multiple zone preț. Selectați zonele prin checkboxuri în formularul agent.</p>
+        </section>
+
+        <section id="users">
+            <h2>11. Manager de Utilizatori</h2>
+            <div class="screenshot" data-title="Manager Utilizatori"></div>
+            <p>Administrare conturi utilizatori și roluri sistem.</p>
+            
+            <h3 id="users-roles">11.1 Roluri și Permisiuni</h3>
+            <table>
+                <thead><tr><th>Rol</th><th>Permisiuni</th><th>Utilizare</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td><strong>agent</strong></td>
+                        <td>Dashboard, Comenzi Agent (doar clienții săi), Rapoarte (proprii)</td>
+                        <td>Agenți vânzări teren</td>
+                    </tr>
+                    <tr>
+                        <td><strong>birou</strong></td>
+                        <td>Dashboard, Clienți, Produse, Comenzi Matrice, Contracte, Rapoarte, Export, Hartă</td>
+                        <td>Personal administrativ</td>
+                    </tr>
+                    <tr>
+                        <td><strong>admin</strong></td>
+                        <td>Acces complet toate modulele: toate modulele birou + Configurare, Agenți, Utilizatori, Date</td>
+                        <td>Administratori sistem</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3 id="users-add">11.2 Creare Utilizator</h3>
+            <p>Câmpuri: Username (unic), Password (min 6 caractere), Nume complet, Rol (dropdown), Agent ID (opțional), Status (active/inactive).</p>
+            
+            <h3 id="users-password">11.3 Schimbare Parolă</h3>
+            <p>Admin poate reseta parola oricărui utilizator. Utilizatorul primește parolă temporară și trebuie să o schimbe la prima autentificare.</p>
+        </section>
+
+        <section id="map">
+            <h2>12. Hartă Agenți GPS</h2>
+            <div class="screenshot" data-title="Hartă Agenți cu GPS"></div>
+            <p>Urmărire în timp real locații agenți prin GPS. Hartă interactivă cu marker-e per agent.</p>
+            
+            <h3 id="map-loading">12.1 Încărcare Hartă</h3>
+            <p>Hartă Leaflet centrată pe România (45.9432, 24.9668). Zoom implicit: nivel 7. Auto-refresh la 30 secunde.</p>
+            
+            <h3 id="map-locations">12.2 Vizualizare Locații</h3>
+            <p>Fiecare agent activ are marker pe hartă. Culori: 🔵 Activ recent (< 5 min), 🟡 Activ (5-30 min), 🔴 Inactiv (> 30 min).</p>
+            
+            <h3 id="map-realtime">12.3 Actualizări Timp Real</h3>
+            <p>Polling la fiecare 30 sec către endpoint /api/agents-locations. Afișare timestamp ultimei actualizări per agent.</p>
+            
+            <h3 id="map-controls">12.4 Controale</h3>
+            <ul>
+                <li><strong>Zoom +/-</strong> - Butoane sau scroll mouse</li>
+                <li><strong>Pan</strong> - Click + drag pe hartă</li>
+                <li><strong>Refresh manual</strong> - Buton 🔄 Actualizează</li>
+                <li><strong>Centru hartă</strong> - Buton 🎯 Resetează la România</li>
+            </ul>
+        </section>
+
+        <section id="data">
+            <h2>13. Gestionare Date</h2>
+            <div class="screenshot" data-title="Import/Export Date"></div>
+            <p>Import/Export date în masă: clienți, produse, prețuri. Format CSV.</p>
+            
+            <h3 id="data-import">13.1 Import Date</h3>
+            <ol class="steps">
+                <li><strong>Selectați tipul</strong> - Clienți, Produse sau Prețuri</li>
+                <li><strong>Alegeți fișier CSV</strong> - Click 📁 Selectează Fișier</li>
+                <li><strong>Preview date</strong> - Tabel cu primele 10 rânduri pentru verificare</li>
+                <li><strong>Validare</strong> - Sistem verifică format și date obligatorii</li>
+                <li><strong>Confirmați import</strong> - Click ✅ Confirmă Import</li>
+                <li><strong>Raport rezultate</strong> - Afișare: X rânduri importate, Y erori</li>
+            </ol>
+            
+            <h3 id="data-format">13.2 Format CSV</h3>
+            <p><strong>Cerințe:</strong> UTF-8 encoding, virgulă ca separator, header cu nume coloane, câmpuri obligatorii completate.</p>
+            
+            <div class="example">
+                <strong>Exemplu header CSV Clienți:</strong><br>
+                nume,cif,nrRegCom,judet,localitate,strada,telefon,email,agentId,priceZone,status
+            </div>
+            
+            <h3 id="data-export">13.3 Export Date</h3>
+            <p>Click 📥 Export pentru a descărca toate datele în format CSV. Utilizați pentru: backup, analiză Excel, migrare date.</p>
+            
+            <h3 id="data-backup">13.4 Backup/Restore</h3>
+            <p><strong>Backup:</strong> Export toate tabelele simultan în ZIP. <strong>Restore:</strong> Import ZIP cu toate datele (șterge și recreează).</p>
+            
+            <div class="warning-box">Operațiunea Restore șterge TOATE datele existente. Creați backup înainte! Nu există UNDO.</div>
+        </section>
+
+        <section id="troubleshooting">
+            <h2>14. Depanare și Întrebări Frecvente</h2>
+            <div class="screenshot" data-title="Troubleshooting"></div>
+            
+            <h3 id="trouble-login">14.1 Probleme Autentificare</h3>
+            <table>
+                <thead><tr><th>Problemă</th><th>Soluție</th></tr></thead>
+                <tbody>
+                    <tr><td>Username/parolă incorectă</td><td>Verificați capslock, contactați admin pentru reset parolă</td></tr>
+                    <tr><td>Sesiune expirată</td><td>Re-autentificați-vă. Sesiunile expiră după 8h inactivitate</td></tr>
+                    <tr><td>Cont blocat</td><td>După 5 încercări eșuate, cont blocat 30 min. Contactați admin</td></tr>
+                </tbody>
+            </table>
+            
+            <h3 id="trouble-saving">14.2 Date Nu Se Salvează</h3>
+            <ul>
+                <li>Verificați conexiunea internet</li>
+                <li>Verificați mesajele de eroare de validare (câmpuri roșii)</li>
+                <li>Încercați să reîncărcați pagina (F5)</li>
+                <li>Ștergeți cache browser (Ctrl+Shift+Del)</li>
+            </ul>
+            
+            <h3 id="trouble-performance">14.3 Performanță Slabă</h3>
+            <p><strong>Soluții:</strong> Închideți tab-uri nefolosite, restartați browserul, verificați RAM disponibil, ștergeți cache, actualizați browserul la ultima versiune.</p>
+            
+            <h3 id="trouble-browser">14.4 Compatibilitate Browser</h3>
+            <p><strong>Suportate:</strong> Chrome 90+, Edge 90+, Firefox 88+. <strong>NU suportat:</strong> Internet Explorer. Recomandare: ultima versiune Chrome.</p>
+            
+            <h3 id="trouble-validation">14.5 Erori Validare</h3>
+            <table>
+                <thead><tr><th>Eroare</th><th>Înțeles</th><th>Acțiune</th></tr></thead>
+                <tbody>
+                    <tr><td>Câmp obligatoriu</td><td>Câmp marcat cu * nu este completat</td><td>Completați câmpul</td></tr>
+                    <tr><td>Format invalid</td><td>Date în format greșit (ex: email fără @)</td><td>Corectați formatul</td></tr>
+                    <tr><td>Valoare duplicată</td><td>Cod/CIF există deja</td><td>Folosiți valoare unică</td></tr>
+                    <tr><td>Valoare prea mare/mică</td><td>Depășire limite permise</td><td>Ajustați valoarea în limitele indicate</td></tr>
+                </tbody>
+            </table>
+            
+            <h3 id="trouble-faq">14.6 Întrebări Frecvente</h3>
+            
+            <div class="example">
+                <strong>Î: Pot șterge o comandă după ce a fost exportată?</strong><br>
+                R: Nu. Comenzile exportate sunt blocate. Contactați departamentul financiar pentru stornare.<br><br>
+                
+                <strong>Î: Cum modific prețurile pentru toți clienții dintr-o zonă?</strong><br>
+                R: Modificați prețurile în modulul Produse pentru zona respectivă. Schimbarea se aplică automat.<br><br>
+                
+                <strong>Î: Un client nu apare în lista mea de clienți (agent). De ce?</strong><br>
+                R: Clientul nu este atribuit agentului dvs. Contactați biroul pentru realoare.<br><br>
+                
+                <strong>Î: Cum fac backup la date?</strong><br>
+                R: Modul Date → Export Backup Complete → Salvați fișierul ZIP. Păstrați-l în siguranță.<br><br>
+                
+                <strong>Î: Pot lucra offline?</strong><br>
+                R: Nu în versiunea curentă. Este necesară conexiune internet permanentă.
+            </div>
+            
+            <h3 id="trouble-support">14.7 Contact Suport</h3>
+            <div class="info-box">
+                <strong>Email:</strong> suport@companie.ro<br>
+                <strong>Telefon:</strong> 021 XXX XXXX (L-V, 09:00-17:00)<br>
+                <strong>Chat:</strong> Buton din colțul dreapta jos al aplicației<br>
+                <strong>Ticketing:</strong> https://suport.companie.ro
+            </div>
+            
+            <div class="tip-box">
+                La contactarea suportului, furnizați: nume utilizator, descriere problemă, pași pentru reproducere, 
+                screenshot (dacă aplicabil), browser și versiune utilizată.
+            </div>
+        </section>
+
+
         <!-- Due to file size limitations, the remaining sections are summarized below -->
         <!-- In a production manual, each section would be 200-400 lines of detailed content -->
         
