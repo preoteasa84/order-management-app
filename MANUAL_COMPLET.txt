@@ -1,0 +1,58 @@
+# Manual Utilizator pentru Aplicația de Gestionare a Comenzilor
+
+## 1. Introducere
+Această secțiune oferă o privire generală asupra funcțiilor aplicației de gestionare a comenzilor, inclusiv scopul și beneficiile utilizării acesteia.
+
+## 2. Cerințe Sistem
+Detalii despre cerințele hardware și software necesare pentru a rula aplicația.
+
+## 3. Instalare
+Pas cu pas despre cum să instalați aplicația pe diferite sisteme de operare.
+
+## 4. Configurare Inițială
+Instrucțiuni pentru configurarea aplicației după instalare, inclusiv setările de bază.
+
+## 5. Navigare în Aplicație
+Cum să navigați prin interfața aplicației, inclusiv o descriere a elementelor de meniu arzătoare.
+
+## 6. Crearea unei Comenzi
+- Pas 1: Accesați secțiunea Comenzi.
+- Pas 2: Completați detaliile comenzii.
+- Exemplu: Oferiți un exemplu de detaliu al comenzii.
+
+## 7. Editarea unei Comenzi
+Instrucțiuni pas cu pas pentru modificarea detaliilor unei comenzi existente.
+
+## 8. Ștergerea unei Comenzi
+Cum să ștergeți o comandă, inclusiv avertismentul de confirmare.
+
+## 9. Gestionarea Stocurilor
+Informații despre gestionarea stocurilor, inclusiv cum să adăugați sau să actualizați produsele în stoc.
+
+## 10. Rapoarte
+Cum să generați rapoarte de vânzări și utilizare, inclusiv opțiunile de filtrare.
+
+## 11. Validarea Datelor
+Detalii despre cum aplicația validează datele utilizatorului înainte de procesarea comenzilor.
+
+## 12. Calcularea Prețurilor
+- Formula: Preț Total = (Cantitate × Preț Unitar) + Taxe
+- Exemplu de calcul.
+
+## 13. Manevrarea Erorilor
+Lista comună de erori și modul de a le rezolva.
+
+## 14. Securitate
+Informații despre măsurile de securitate implementate în aplicație.
+
+## 15. Faq-uri
+Întrebări frecvente și răspunsurile aferente pentru utilizatori.
+
+## 16. Contact
+Informații de contact pentru asistență tehnică.
+
+## 17. Actualizări
+Cum să actualizați aplicația și să obțineți cele mai recente funcționalități.
+
+## 18. Concluzie
+Oferiți o închidere, inclusiv puterea aplicației și a comunității utilizatorilor.
