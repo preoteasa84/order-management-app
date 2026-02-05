@@ -1,0 +1,68 @@
+<export>
+    <invoices>
+        <invoice>
+            <description>Export detaliat al facturilor</description>
+            <understandingXML>
+                <step>Înțelegerea formatului XML</step>
+                <description>Este esențial să înțelegem structura formatului XML pentru a crea un export corect.</description>
+            </understandingXML>
+            <preparingOrders>
+                <step>Pregătirea comenzilor pentru export</step>
+                <description>Se adună toate comenzile care trebuie exportate.</description>
+            </preparingOrders>
+            <validation>
+                <step>Validarea înainte de export</step>
+                <description>Verificarea datelor pentru a ne asigura că sunt corecte.</description>
+            </validation>
+            <runningExport>
+                <step>Executarea exportului</step>
+                <description>Se rulează procesul de export pentru a genera fișierul XML.</description>
+            </runningExport>
+            <fileTypesLocations>
+                <step>Tipuri de fișiere și locații</step>
+                <description>Fișierele exportate vor fi salvate în locația specificată din aplicație.</description>
+            </fileTypesLocations>
+            <troubleshooting>
+                <step>Depanarea erorilor de export</step>
+                <description>Găsirea și rectificarea oricăror erori întâmpinate în timpul exportului.</description>
+            </troubleshooting>
+            <importingToAccountingSoftware>
+                <step>Importarea în software-ul de contabilitate</step>
+                <description>Integrările cu software-ul de contabilitate trebuie să fie verificate pentru a asigura funcționalitatea.</description>
+            </importingToAccountingSoftware>
+        </invoice>
+    </invoices>
+    <receipts>
+        <receipt>
+            <description>Export detaliat al chitanțelor</description>
+            <understandingXML>
+                <step>Înțelegerea formatului XML</step>
+                <description>Același principiu se aplică și pentru chitanțe.</description>
+            </understandingXML>
+            <preparingOrders>
+                <step>Pregătirea chitanțelor pentru export</step>
+                <description>Se selectează chitanțele care trebuie exportate.</description>
+            </preparingOrders>
+            <validation>
+                <step>Validarea înainte de export</step>
+                <description>Verificare similară cu facturile.</description>
+            </validation>
+            <runningExport>
+                <step>Executarea exportului</step>
+                <description>Rularea procesului de export pentru a genera fișierele necesare.</description>
+            </runningExport>
+            <fileTypesLocations>
+                <step>Tipuri de fișiere și locații</step>
+                <description>Chitanțele vor fi, de asemenea, salvate în locația specificată.</description>
+            </fileTypesLocations>
+            <troubleshooting>
+                <step>Depanarea erorilor de export</step>
+                <description>Identificarea problemelor întâmpinate în timpul procesului.</description>
+            </troubleshooting>
+            <importingToAccountingSoftware>
+                <step>Importarea în software-ul de contabilitate</step>
+                <description>Asigurați-vă că exporturile sunt compatibile cu software-ul de contabilitate utilizat.</description>
+            </importingToAccountingSoftware>
+        </receipt>
+    </receipts>
+</export>
