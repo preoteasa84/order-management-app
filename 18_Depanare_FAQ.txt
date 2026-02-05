@@ -1,0 +1,59 @@
+# 18_Depanare_FAQ.txt
+
+## Problematici Comune și Soluții
+
+### Probleme de Autentificare
+**Descriere:** Utilizatorii pot întâmpina dificultăți în a se conecta la sistem.
+**Soluții:** Asigurați-vă că ați introdus corect numele de utilizator și parola. Dacă ați uitat parola, utilizați opțiunea de resetare a parolei.
+
+### Erori de Introducere a Datelor
+**Descriere:** Datele nu se salvează corect.
+**Soluții:** Verificați formatele corecte pentru câmpurile de introducere.
+
+### Erori de Calcul
+**Descriere:** Calculele nu se execută corect în raport.
+**Soluții:** Faceți o verificare a formulelor utilizate.  Asigurați-vă că toate datele sunt corecte.
+
+### Probleme de Performanță
+**Descriere:** Aplicația se mișcă lent.
+**Soluții:** Verificați conexiunea la internet și încercați să reporniți aplicația.
+
+### Eșecuri la Export
+**Descriere:** Exporturile nu se finalizează cu succes.
+**Soluții:** Verificați dimensiunea fișierului și formatele acceptate.
+
+### Compatibilitate a Browser-ului
+**Descriere:** Aplicația nu se afișează corect.
+**Soluții:** Folosiți cele mai recente versiuni ale browser-elor recomandate.
+
+## Întrebări Frecvente
+
+### Cum pot reseta parola?
+**Răspuns:** Accesați secțiunea de autentificare și dați clic pe „Am uitat parola”. Urmați instrucțiunile din emailul primit.
+
+### Cum pot șterge clienți?
+**Răspuns:** Navigați la secțiunea „Clienți”, selectați clientul dorit și faceți clic pe „Șterge”.
+
+### Cum funcționează modificările de preț?
+**Răspuns:** Modificările de preț sunt actualizate automat în sistem. Verificați cele mai recente note de actualizare.
+
+### Unde sunt stocate contractele?
+**Răspuns:** Contractele sunt stocate în secțiunea „Documente”. Puteți căuta după nume.
+
+### Cum export fișiere Excel?
+**Răspuns:** Accesați rapoartele dorite și faceți clic pe „Exportați în Excel”.
+
+### Care sunt limitele de mărime a fișierelor?
+**Răspuns:** Dimensiunea maximă a fișierului pentru import este de 10 MB.
+
+### Cât de des se fac backup-uri?
+**Răspuns:** Backup-urile sunt efectuate zilnic la ora 03:00.
+
+### Poate edita mai multe persoane simultan?
+**Răspuns:** Da, aplicația permite editarea simultană de către mai mulți utilizatori.
+
+### Ce se întâmplă dacă un agent este offline?
+**Răspuns:** Dacă un agent este offline, sistemul va salva automat progresul și va sincroniza la revenirea online.
+
+### Cum primesc rapoartele lunare?
+**Răspuns:** Rapoartele lunare sunt trimise automat prin email la începutul fiecărei luni.
