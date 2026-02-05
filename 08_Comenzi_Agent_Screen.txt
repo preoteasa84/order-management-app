@@ -1,0 +1,37 @@
+# Operațiuni Detaliate pentru Ecranul Agent
+
+## 1. Începerea unei comenzi noi
+Pentru a începe o nouă comandă, selectați opțiunea "Nouă Comandă" din meniul principal. Aceasta va deschide o fereastră nouă în care puteți introduce informațiile necesare.
+
+## 2. Adăugarea produselor la comandă
+Pentru a adăuga produse la comandă, folosiți câmpul de căutare pentru a găsi produsul dorit. Faceți clic pe butonul "Adaugă" pentru a-l include în comandă.
+
+## 3. Formula de calcul automat al prețului
+Prețul total al produselor este calculat folosind următoarea formulă:
+
+**Cantitate x Preț net x (1 + TVA%)**
+
+### Exemplu:
+- Cantitate: 5
+- Preț net: 100 lei
+- TVA: 19%
+
+Calcule:
+- Preț total = 5 x 100 x (1 + 0.19) = 5 x 100 x 1.19 = 595 lei
+
+## 4. Setarea tipului de plată
+Se pot alege două tipuri de plată:
+- **Imediat**: Plata se efectuează la momentul comenzii.
+- **Cu Termen**: Plata se va efectua la o dată ulterioară.
+
+## 5. Modificarea cantităților
+Pentru a modifica cantitatea unui produs, căutați produsul în lista de comenzi existente și introduceți noua cantitate dorită. Apăsați butonul "Actualizează" pentru a salva modificările.
+
+## 6. Salvarea comenzilor
+Pentru a salva comanda, faceți clic pe butonul "Salvează comanda". Asigurați-vă că toate informațiile sunt corecte. Veți primi un mesaj de confirmare după salvare.
+
+## 7. Editarea comenzilor existente
+Pentru a edita o comandă existentă, selectați comanda din lista de ordine, faceți modificările dorite și apăsați "Salvează". Mesaj de validare: "Comanda a fost actualizată cu succes!"
+
+## 8. Ștergerea comenzilor
+Pentru a șterge o comandă, selectați comanda dorită și apăsați pe butonul "Șterge". Un mesaj de confirmare va apărea: "Sigur doriți să ștergeți această comandă?". Dacă confirmați, comanda va fi ștearsă. Dacă există erori, vi se va afișa un mesaj cum ar fi: "Eroare: Comanda nu poate fi ștearsă."
