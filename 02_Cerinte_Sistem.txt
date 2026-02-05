@@ -1,0 +1,371 @@
+# CAPITOLUL 2 - CERINȚE DE SISTEM
+
+## 2.1 HARDWARE - CE COMPUTER TREBUIE?
+
+Pentru a folosi aplicația, calculatorul dvs. trebuie să îndeplinească următoarele specificații MINIME pentru a funcționa acceptabil. Dacă aveți mai vechi, lucrarea va fi LENTĂ și frustrantă.
+
+### PROCESOR
+
+MINIM: Intel Core i5 sau AMD Ryzen 5 (din 2015+)
+RECOMANDAT: Intel Core i7 sau AMD Ryzen 7 (din 2017+)
+
+De ce? Procesorul trebuie să calculeze rapid prețurile, să sorteze mii de clienți, și să renderizeze graficele din rapoarte. Un procesor slab = aplicație lentă.
+
+Cum să verific ce procesor am?
+- WINDOWS: Settings → System → About → "Processor"
+- macOS: Apple menu → About This Mac → "Processor"
+- LINUX: Terminal: cat /proc/cpuinfo
+
+### MEMORIE RAM
+
+MINIM: 8 GB RAM
+RECOMANDAT: 16 GB RAM
+IDEAL: 32 GB RAM (pentru lucru cu multiple file simultan)
+
+De ce? RAM-ul e memoria "rapidă" a computerului. Cu mai mult RAM, aplicația poate ține în memorie mai multe date deodată și nu trebuie să citească constant de pe disc (care e mai lent).
+
+Exemplu: Dacă aveți 8GB RAM și deschideți:
+- Aplicația (500MB)
+- Chrome cu 20 tab-uri (3GB)
+- Outlook cu 10.000 mailuri (1GB)
+- Spotify (200MB)
+= Total 4.7GB folosit, doar 3.3GB liber
+
+Aplicația va fi lentă pentru că nu e destul RAM liber!
+
+Cum să verific RAM-ul?
+- WINDOWS: Settings → System → About → "Installed RAM"
+- macOS: Apple menu → About This Mac → "Memory"
+- LINUX: Terminal: free -h
+
+### SPAȚIU DE STOCARE
+
+MINIM: 500 MB liber pe disc
+RECOMANDAT: 2 GB liber
+IDEAL: 5+ GB liber
+
+De ce? Aplicația trebuie spațiu pentru:
+- Cache (imagini și fișiere temporare)
+- Download rapoarte PDF
+- Fișiere importate/exportate
+
+Cum să verific spațiu liber?
+- WINDOWS: Deschid "This PC" → Click dreapta pe C: → Properties
+- macOS: Apple menu → About This Mac → Storage
+- LINUX: Terminal: df -h
+
+### ECRAN ȘI REZOLUȚIE
+
+MINIM: 1024 x 768 pixeli (foarte vechi)
+NORMAL: 1366 x 768 pixeli (laptop standard)
+RECOMANDAT: 1920 x 1080 pixeli (Full HD)
+IDEAL: 2560 x 1440 pixeli (2K)
+
+De ce? Aplicația arată o mulțime de coloane în tabele (Produs, Cantitate, Preț, TVA, Total, etc.). Cu ecran mic, trebuie să faceți scroll orizontal mereu. Cu ecran mare, vedeți totul simultan.
+
+Exemplu: Matrix screen are 20+ coloane. La 1024px lățime, vedeți 3-4 coloane. La 1920px, vedeți 12-15 coloane.
+
+Cum să verific rezoluția?
+- WINDOWS: Settings → System → Display → "Resolution"
+- macOS: Apple menu → System Preferences → Displays → "Resolution"
+- LINUX: Settings → Display
+
+### CONEXIUNE LA MONITOR
+
+Asigurați-vă că monitorul este conectat corect:
+- HDMI (cel mai comun pe laptop-uri moderne)
+- USB-C (pe MacBook-uri recent)
+- DisplayPort (pe monitoare profesionale)
+- VGA (foarte vechi, evitați)
+
+💡 TIP: Dacă lucrul e lent, încercați cu o rezoluție mai mică. De exemplu, în loc de 2560x1440, mergeți pe 1920x1080. Sistemul va trebui să renderizeze mai puțin și va fi mai rapid.
+
+## 2.2 SOFTWARE - CE SISTEM DE OPERARE TREBUIE?
+
+Aplicația funcționează pe mai multe sisteme de operare, dar versiunile TREBUIE să fie suficiente de recente.
+
+### WINDOWS
+
+MINIM: Windows 10 (versiune 1909 din 2019)
+RECOMANDAT: Windows 11 (versiunea cea mai nouă)
+NU ESTE SUPORTAT: Windows 7, Windows 8 (prea vechi!)
+
+De ce Windows 10 minim? Pentru că:
+- Windows 7 e din 2009 (15 ani în urmă!)
+- Windows 8 e din 2012 (neobișnuit)
+- Windows 10 (2015) are toți driverii și suportul modern
+- Windows 11 (2021) e cel mai nou și stabil
+
+Cum să verific versiunea Windows?
+- Apăsați Windows Key + R
+- Tastați "winver" și apăsați Enter
+- Se deschide o fereastră cu versiunea exactă
+
+Exemplu: "Windows 10 Pro, version 22H2"
+
+⚠️ AVERTISMENT: Dacă aveți Windows 7 sau 8, TREBUIE SĂ FACEȚI UPGRADE la Windows 10 sau 11. Nu-i greu, dar OBLIGATORIU. Contactați un IT-ist dacă nu știți cum.
+
+### macOS
+
+MINIM: macOS Catalina (10.15 din 2019)
+RECOMANDAT: macOS Ventura (13.x din 2022) sau mai nou
+NU ESTE SUPORTAT: macOS Sierra, macOS High Sierra (prea vechi!)
+
+De ce macOS Catalina minim? Pentru că:
+- Versiunile mai vechi nu au suportul SSL/TLS necesar
+- Versiunile mai vechi nu pot rula browser-e moderne
+
+Cum să verific versiunea macOS?
+- Click pe Apple menu (sus stânga) → About This Mac
+- Se deschide o fereastră cu versiunea exactă
+
+Exemplu: "macOS Ventura 13.5.1"
+
+### LINUX
+
+SUPORTAT: Ubuntu 20.04 LTS, Ubuntu 22.04 LTS, Debian 11+
+
+De ce LTS? LTS = Long Term Support. Aceste versiuni sunt stabile și primesc update-uri de securitate mulți ani.
+
+Cum să verific versiunea Linux?
+- Terminal: lsb_release -a
+- Sau: cat /etc/os-release
+
+Exemplu: "Ubuntu 22.04 LTS (Jammy Jellyfish)"
+
+💡 TIP: Dacă aveți Linux mai vechi, nu-i obligatoriu să upgrade-ați. Probabil va merge și pe versiuni mai vechi, dar nu garantez stabilitate.
+
+## 2.3 BROWSER WEB - CARE BROWSER SĂ FOLOSESC?
+
+Aplicația funcționează în orice browser modern. Iată care sunt SUPORTAȚI OFICIAL:
+
+### GOOGLE CHROME (RECOMANDAT)
+
+VERSIUNE MINIM: 80 (din 2020)
+VERSIUNE ACTUALĂ: 120+ (2024)
+DOWNLOAD: https://www.google.com/chrome/
+
+AVANTAJE:
+✓ Cel mai rapid (performanță excelentă)
+✓ Cel mai stabil (rareori crapă)
+✓ Sincronizare cloud pentru favoriteuri
+✓ Extensii bogat (ad-blocker, password manager)
+
+DEZAVANTAJE:
+✗ Consumă mai mult RAM (normal, dar noticeable)
+✗ Datele tale sunt trimise la Google (privacy concern)
+
+RECOMANDARE: Chrome e cea mai bună alegere pentru aplicația asta.
+
+### MOZILLA FIREFOX
+
+VERSIUNE MINIM: 75 (din 2020)
+VERSIUNE ACTUALĂ: 120+ (2024)
+DOWNLOAD: https://www.mozilla.org/firefox/
+
+AVANTAJE:
+✓ Rapid și stabil
+✓ Protecție privacy mai bună decât Chrome
+✓ Open source (codul e public)
+✓ Consumă mai puțin RAM decât Chrome
+
+DEZAVANTAJE:
+✗ Ceva mai lent decât Chrome
+✗ Uneori buguri cu JavaScript
+
+RECOMANDARE: Alegere bună, dar ceva mai lent decât Chrome.
+
+### MICROSOFT EDGE
+
+VERSIUNE MINIM: 80 (versiunea Chromium din 2020)
+VERSIUNE ACTUALĂ: 120+ (2024)
+PREINSTALAT: Pe Windows 10 și 11
+
+AVANTAJE:
+✓ Foarte rapid (bazat pe Chromium, motorul Chrome)
+✓ Integrat în Windows (bună optimizare)
+✓ Sincronizare cu contul Microsoft
+✓ Mod dark frumos
+
+DEZAVANTAJE:
+✗ Numai pe Windows și macOS (nu Linux)
+✗ Colectează date pentru Microsoft
+
+RECOMANDARE: Alegere bună dacă ești pe Windows.
+
+### SAFARI (numai macOS)
+
+VERSIUNE MINIM: 13 (din 2019)
+VERSIUNE ACTUALĂ: 17.x (2023)
+PREINSTALAT: Pe macOS și iOS
+
+AVANTAJE:
+✓ Integrat perfect în macOS
+✓ Excelentă baterie pe MacBook (optimizare hardware)
+✓ Sincronizare cu iCloud
+
+DEZAVANTAJE:
+✗ Doar pe Mac și iPhone
+✗ Uneori incompatibilități cu JavaScript
+✗ Ceva mai lent decât Chrome
+
+RECOMANDARE: OK pe Mac, dar Chrome e mai sigur.
+
+### NETSCAPE, INTERNET EXPLORER, OPERA
+
+❌ NU SUNT SUPORTATE! Prea vechi sau incompatibile.
+
+De ce nu Internet Explorer? Pentru că:
+- IE e din 2009 (15 ani în urmă!)
+- Microsoft l-a depreciat în 2016
+- Chiar și Microsoft zice: "Nu-l mai folosiți!"
+- Nu suporta HTML5 modern
+
+### CUM SĂ VERIFIC VERSIUNEA BROWSER-ULUI?
+
+Chrome/Chromium/Edge:
+- Click pe 3 puncte (sus dreapta) → Help → About Google Chrome
+- Versiunea se arată imediat
+- Se face update automat
+
+Firefox:
+- Click pe hamburger meniu (sus dreapta) → Help → About Firefox
+- Versiunea se arată imediat
+- Se face update automat
+
+Safari:
+- Click pe Safari menu (sus dreapta) → About Safari
+- Versiunea se arată imediat
+
+## 2.4 CONEXIUNE LA INTERNET
+
+OBLIGATORIU: Trebuie să aveți o conexiune la internet ACTIVĂ și STABILĂ în permanență.
+
+De ce? Pentru că aceasta e o aplicație WEB, NU desktop. Datele stau pe un server la care voi accesați prin internet.
+
+### VITEZA NECESARĂ
+
+MINIM: 2 Mbps (megabiți pe secundă) = LENT, dar merge
+NORMAL: 10 Mbps = Lucru confortabil
+IDEAL: 25+ Mbps = Lucru rapid și responsiv
+
+De ce viteza conteaza?
+- Cu 2 Mbps, o pagină cu 1000 rânduri durează 5-10 secunde să se încărce
+- Cu 10 Mbps, aceeași pagină durează 1-2 secunde
+- Cu 25+ Mbps, pagina e instantanee
+
+### TIPURI DE CONEXIUNE ACCEPTATE
+
+✓ WiFi (casa, birou) - OK, dar ceva mai lent și mai instabil
+✓ Fibră optică - PERFECT, viteza constantă
+✓ 4G / 5G mobil - OK, dar consumă date (planu de date mare!)
+✓ ADSL vechi - Merge, dar FOARTE LENT, evitați dacă posibil
+✗ Dial-up (modem de 90s) - NU MERGE, prea vechi
+
+### STABILITATE CONEXIUNE
+
+Important nu-i doar VITEZA, ci și STABILITATEA.
+
+Exemplu:
+- 10 Mbps constant = Perfect
+- 100 Mbps dar se cade des = Groaznic
+
+De ce? Dacă conexiunea cade în mijlocul salvării unei comenzi:
+- Comanda NU se salvează
+- Trebuie să o reintri
+- Pierdere de timp
+
+💡 TIP: Testați viteza conexiunii pe https://www.speedtest.net/
+
+### CE SE ÎNTÂMPLĂ DACĂ MĂ DECONECTEZ?
+
+Dacă cade internetul:
+1. Pagina se va "îngheța" (nu mai răspunde)
+2. După ~30 secunde, va apărea mesaj: "Server error - Lost connection"
+3. Datele care NU au fost salvate se pierd
+4. Trebuie să încerc din nou după ce se reconectează
+
+⚠️ AVERTISMENT: NU PIERDETI DATELE! Dacă lucrați pe teren cu conexiune slabă:
+- Salvați frecvent (nu așteptați să introduceți 10 comenzi)
+- Verifica conexiune după fiecare salvare
+- Dacă conexiune-i slabă, lucrati offline pe caiete, apoi reintrati datele la birou
+
+## 2.5 PLUG-INURI ȘI EXTENSII
+
+Aplicația NU necesită plug-inuri speciale (Java, Flash, etc.).
+
+Dar RECOMAND următoarele extensii (optional, dar utile):
+
+### Password Manager
+- Bitwarden (gratuit, open-source)
+- 1Password (cu cost)
+- LastPass (gratuit + premium)
+
+De ce? Pentru a nu uita parola și pentru a o păstra sigur.
+
+### Ad Blocker
+- uBlock Origin (gratuit, open-source)
+- AdBlock Plus (gratuit)
+
+De ce? Pentru a bloca anunțuri și a mări viteza de încărcare (anunțurile consumă lărgime de bandă).
+
+### Privacy / VPN
+- Mullvad VPN (gratuit, open-source)
+- ProtonVPN (gratuit + premium)
+
+De ce? Pentru a cripta conexiunea la internet (mai sigur pe WiFi public).
+
+⚠️ AVERTISMENT: Nu-i obligatoriu, dar recomandabil pentru securitate.
+
+## 2.6 SISTEM DE FIȘIERE ȘI PERMISIUNI
+
+### Permisiuni Browser
+
+Aplicația NU cere permisiuni dangerose (microfon, cameră, etc.).
+
+Dar cere:
+✓ Localization (pentru a ști zona ta)
+✓ Cookies (pentru a-și aminti login-ul)
+✓ Local Storage (pentru a memora setări locale)
+
+Accepta MEREU aceste permisiuni! Altfel nu va merge bine.
+
+### Permisiuni Sistem
+
+Asigurați-vă că browserul are permisiuni:
+- WINDOWS: Pagina web nu trebuie să ruleze ca Administrator
+- macOS: Pagina web NU cere permisiuni speciale
+- LINUX: Pagina web NU cere permisiuni speciale
+
+## 2.7 ANTIVIRUS ȘI FIREWALL
+
+Aplicația e SIGURĂ și NU conține malware.
+
+Dar asigurați-vă:
+✓ Antivirus-ul vostru (Windows Defender, Norton, etc.) NU blochează conexiunea
+✓ Firewall-ul (Windows Firewall, Mac Firewall, etc.) NU blochează browserul
+✓ Router-ul home NU blochează portul 443 (HTTPS)
+
+De obicei, firewall-ul NU blochează aplicații web (merge pe port 443), dar merită verificat.
+
+## 2.8 CHECKLIST FINAL - SUNT PREGĂTIT?
+
+Înainte de a vă conecta la aplicație, bifați:
+
+□ Am Windows 10+, macOS Catalina+, sau Linux Ubuntu 20.04+?
+□ Am Chrome, Firefox, Edge, sau Safari (versiune recent)?
+□ Am minim 8GB RAM și 500MB spațiu liber?
+□ Am internet care merge cel puțin 2 Mbps (testez pe speedtest.net)?
+□ Conexiunea-mi e STABILĂ (nu se cade mereu)?
+□ Am ecran cu rezoluție acceptabilă (minim 1024x768)?
+□ Am datele de login (username și parolă)?
+□ Antivirus-ul NU blochează browserul?
+□ Firewall-ul NU blochează portul 443?
+
+Dacă ați bifat TOATE - sunteți GATA! ✓
+
+Dacă NU, contactați IT-istul și rezolvați problema respectivă.
+
+---
+
+**CAPITOLUL URMĂTOR: Autentificare și Login**
