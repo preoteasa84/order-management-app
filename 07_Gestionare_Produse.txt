@@ -1,0 +1,59 @@
+# Gestionare Produse
+
+## Operatiuni de management
+
+1. **Adaugarea de produse**  
+   Comanda: `adaugare_produs(cod_furnizor, descriere, unitate_masura, gestiune, gramaj, cota_tva)`  
+   Exemplu: `adaugare_produs('12345', 'Produs A', 'buc', 'Gestiune 1', 500, 19%)`  
+
+2. **Gestionarea preturilor pe zone**  
+   Preturi variate in functie de zonele de livrare.  
+   Comanda: `gestionare_preturi(zone, pret)`  
+   Exemplu: `gestionare_preturi('zona_1', 100)`
+
+3. **Calcularea preturilor**  
+   - **Pretul Net**: `pret_net = pret + (pret * cota_tva)`  
+   - **Pretul Final**: `pret_final = pret_net * (1 + cota_tva)`
+
+4. **Cote TVA**  
+   - 9%:  
+     Exemplu: `pret_final = 100 + (100 * 0.09)`
+   - 11%:  
+     Exemplu: `pret_final = 100 + (100 * 0.11)`
+   - 19%:  
+     Exemplu: `pret_final = 100 + (100 * 0.19)`
+
+5. **Descrierea campurilor**  
+   - **Cod Furnizor**: Identificator unic pentru furnizor.
+   - **Descriere**: Detaliile produsului.
+   - **Unitate Masura**: U.M. utilizata (buc, kg, litri).
+   - **Gestiune**: Locatia gestiunii.
+   - **Gramaj**: Greutatea produsului.
+   - **Cota TVA**: Procentul de TVA aplicabil.
+
+6. **Editarea produselor**  
+   Comanda: `editare_produs(cod_furnizor, noi_detalii)`
+
+7. **Stegerea produselor**  
+   Comanda: `stergere_produs(cod_furnizor)`
+
+8. **Cautarea produselor**  
+   Comanda: `cautare_produs(cod_furnizor)`  
+   Exemplu: `cautare_produs('12345')`  
+
+## Exemple
+- **Adaugare produs:**
+   ```
+   adaugare_produs('67890', 'Produs B', 'kg', 'Gestiune 2', 1000, 11%)
+   ```
+- **Calcul pret final (19% TVA):**
+   ```
+   pret_final = 500 + (500 * 0.19) = 595
+   ```  
+
+- **Cautare produs:**
+   ```
+   cautare_produs('67890') // returneaza detalii despre Produs B
+   ```  
+
+Crearea, editarea, stegera si cautarea produselor se pot efectua cu usurinta intervenind in sistemul de gestionare a produselor. Fiecare operatie este inregistrata si poate fi revizuita ulterior.
