@@ -1,0 +1,78 @@
+# Gestionare Clienți
+
+## 1. Adăugarea de clienți
+- **Pas 1**: Completați câmpurile necesare pentru un nou client:
+  - **Nume**: Numele complet al clientului.
+  - **CIF**: Codul de identificare fiscală al clientului.
+  - **Adresa**: Adresa completă a clientului.
+  - **Contact**: Numărul de telefon sau adresa de email a clientului.
+  - **Zona Preț**: Zona de preț în care se încadrează clientul (ex: mic, mediu, mare).
+  - **Agent**: Numele agentului responsabil pentru client.
+  - **Status**: Statusul clientului (ex: activ, inactiv).
+  - **Note**: Orice informații suplimentare relevante.
+
+- **Pas 2**: Verificarea regulilor de validare:
+  - **Nume**: Nu trebuie să fie gol.
+  - **CIF**: Trebuie să fie un număr valid de 10 cifre.
+  - **Adresa**: Nu trebuie să fie goală.
+  - **Contact**: Trebuie să fie un număr de telefon valid sau o adresă de email.
+  - **Zona Preț**: Trebuie să fie selectată dintr-o listă prestabilită.
+  - **Agent**: Trebuie să fie un nume valid al agenților disponibili.
+  - **Status**: Trebuie să fie activ sau inactiv.
+
+- **Pas 3**: Mesaje de eroare corespunzătoare:
+  - „Numele nu poate fi gol.”
+  - „CIF-ul trebuie să conțină exact 10 cifre.”
+  - „Adresa nu poate fi goală.”
+  - „Contactul trebuie să fie valid.”
+  - „Zona Preț trebuie selectată.”
+  - „Agentul nu este valid.”
+  - „Statusul trebuie să fie activ sau inactiv.”
+
+## 2. Editarea clienților
+- **Pas 1**: Găsiți clientul dorit folosind funcția de căutare.
+- **Pas 2**: Faceți modificările necesare în câmpurile dorite.
+- **Pas 3**: Salvați modificările.
+- **Pas 4**: Validați din nou datele conform regulilor menționate mai sus.
+
+## 3. Ștergerea clienților
+- **Pas 1**: Găsiți clientul pe care doriți să îl ștergeți.
+- **Pas 2**: Confirmați că doriți să ștergeți clientul (mesaj de confirmare).
+- **Pas 3**: Clientul va fi eliminat din baza de date.
+
+## 4. Căutarea clienților
+- **Pas 1**: Utilizați funcția de căutare pentru a găsi clienți după
+  - Nume
+  - CIF
+  - Zona Preț
+  - Agent
+  - Status
+
+## 5. Filtrarea clienților
+- **Pas 1**: Aplicați filtrele pentru a restrânge lista de clienți:
+  - După Zona Preț
+  - După Agent
+  - După Status
+
+## Exemple practice
+- **Adăugarea unui client**:
+  - Nume: Ion Popescu
+  - CIF: 1234567890
+  - Adresa: Strada Exemplului, Nr.10, București
+  - Contact: 0712345678
+  - Zona Preț: Mediu
+  - Agent: Maria Ionescu
+  - Status: Activ
+  - Note: Client nou, necesită asistență.
+
+- **Editarea unui client**:
+  - Schimbați Statusul din „Activ” în „Inactiv” pentru clientul cu CIF 1234567890.
+
+- **Ștergerea unui client**:
+  - Confirmarea ștergerii clientului Ion Popescu.
+
+- **Căutare client**:
+  - Căutare după Nume: Ion Popescu
+
+- **Filtrare clienți**:
+  - Filtrare după Zona Preț: Mic
