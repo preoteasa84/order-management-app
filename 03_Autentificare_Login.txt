@@ -1,0 +1,35 @@
+# Instrucțiuni de autentificare și conectare pentru aplicația de gestionare a comenzilor
+
+## Descrierea câmpurilor
+1. **Utilizator**: Acesta este câmpul unde utilizatorii trebuie să introducă numele de utilizator pentru a se conecta la aplicație. 
+   - **Exemplu**: `preoteasa84`
+   - **Validare**: Numele de utilizator trebuie să conțină între 3 și 20 de caractere și să nu includă caractere speciale.
+   - **Întreținere**: Asigurați-vă că numele de utilizator este unic și nu este deja utilizat.
+
+2. **Parolă**: Câmpul în care utilizatorii introduc parola asociată contului lor.
+   - **Exemplu**: `********`
+   - **Validare**: Parola trebuie să conțină minimum 8 caractere, cu cel puțin o literă mare și un număr.
+   - **Întreținere**: Parolele trebuie să fie schimbate la fiecare 90 de zile și să nu fie reutilizate.
+
+## Regulile de validare
+- Câmpurile **Utilizator** și **Parolă** sunt obligatorii.
+- La trimiterea formularului, aplicația va verifica dacă câmpurile sunt completate corespunzător.
+- Utilizatorii vor primi un mesaj de avertizare dacă informațiile introduse sunt incorecte sau incomplete.
+
+## Tratamentul erorilor
+- **Eroare 401**: Nume de utilizator sau parolă incorecte.
+   - **Mesaj**: „Datele de autentificare nu sunt corecte. Vă rugăm să încercați din nou.”
+- **Eroare 404**: Contul nu a fost găsit.
+   - **Mesaj**: „Contul specificat nu există. Vă rugăm să verificați numele de utilizator.”
+
+## Exemple practice
+1. **Exemplu de autentificare reușită**:
+   - **Input**: `Utilizator: preoteasa84`, `Parolă: Parola123`
+   - **Rezultatul**: „Autentificare reușită. Bine ați venit în aplicația de gestionare a comenzilor!”
+
+2. **Exemplu de autentificare eșuată**:
+   - **Input**: `Utilizator: preoteasa84`, `Parolă: GreșităParola`
+   - **Rezultatul**: „Datele de autentificare nu sunt corecte. Vă rugăm să încercați din nou.”
+
+## Concluzie
+Asigurați-vă că respectați toate regulile de validare și că urmați instrucțiunile de mai sus pentru a evita erorile la autentificare.
