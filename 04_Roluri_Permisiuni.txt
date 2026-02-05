@@ -1,0 +1,33 @@
+# Descrierea rolurilor utilizatorilor în aplicația de gestionare a comenzilor
+
+## 1. Administrator (Admin)
+- **Permisiuni:** Administratorii au acces complet la toate funcționalitățile aplicației. Aceștia pot gestiona utilizatorii, configurațiile aplicației, comenzile și produsele.
+- **Restricții:** Nu există restricții aplicate administratorilor.
+- **Ce pot face:** 
+  - Creare, actualizare și ștergere de utilizatori
+  - Gestionarea permisiunilor altor roluri
+  - Vizualizarea tuturor comenzilor și rapoartelor
+
+## 2. Manager
+- **Permisiuni:** Managerii au acces la funcționalitățile esențiale ale aplicației, permițându-le gestionarea comenzilor și a echipei.
+- **Restricții:** Nu pot șterge utilizatori și nu au acces la setările aplicației.
+- **Ce pot face:** 
+  - Crearea și gestionarea comenzilor
+  - Atribuirea comenzilor către agenți
+  - Generarea rapoartelor de performanță
+
+## 3. Birou
+- **Permisiuni:** Biroul are acces limitat la informațiile clienților și la comenzile în curs.
+- **Restricții:** Nu pot modifica setările aplicației și nu au permisiuni pentru a șterge utilizatori sau comenzi.
+- **Ce pot face:** 
+  - Procesarea comenzilor
+  - Comunica cu clienții
+  - Verificarea stării comenzilor
+
+## 4. Agent
+- **Permisiuni:** Agenții pot accesa informațiile despre produsele disponibile și starea comenzilor.
+- **Restricții:** Nu pot gestiona utilizatorii și nu au acces la rapoarte detaliate.
+- **Ce pot face:** 
+  - Aseza comenzi în numele clienților
+  - Asista clienții cu informații despre produse
+  - Actualiza statusul comenzilor în lucru
