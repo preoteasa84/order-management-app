@@ -12,6 +12,7 @@ const zonesRouter = require("./routes/zones");
 const authRouter = require("./routes/auth");
 const clientProductsRouter = require("./routes/client-products");
 const csvRouter = require("./routes/csv");
+const productGroupsRouter = require("./routes/product-groups");
 const { initializeClientProducts } = require("./routes/client-products");
 
 const app = express();
@@ -28,6 +29,7 @@ app.use("/api/zones", zonesRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/clients", clientProductsRouter);
 app.use("/api/csv", csvRouter);
+app.use("/api/product-groups", productGroupsRouter);
 
 // Health check
 app.get("/api/health", (req, res) => {
