@@ -89,6 +89,12 @@ const Navigation = ({ currentUser, activeSection, setActiveSection, mobileMenuOp
       icon: Download,
       roles: ["admin", "birou"],
     },
+    {
+      id: "export-grouped",
+      label: "Export cu Grupări",
+      icon: Download,
+      roles: ["admin", "birou"],
+    },
   ];
 
   const handleNavClick = (itemId) => {
