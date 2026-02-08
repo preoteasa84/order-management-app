@@ -187,6 +187,19 @@ const createTables = () => {
     )
   `);
 
+  // Product Groups table (for grouping products in invoices)
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS product_groups (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      productIds TEXT NOT NULL,
+      price REAL NOT NULL,
+      cotaTVA INTEGER NOT NULL,
+      createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
+      updatedAt TEXT DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
   console.log('Database tables initialized');
 };
 

@@ -8,6 +8,7 @@ import OrdersAgentScreen from "./pages/OrdersAgentScreen";
 import OrdersMatrixScreen from "./pages/OrdersMatrixScreen";
 import ReportsScreen from "./pages/ReportsScreen";
 import ExportScreen from "./pages/ExportScreen";
+import ExportScreenGrouped from "./pages/ExportScreenGrouped";
 import ClientsScreen from "./pages/ClientsScreen";
 import ProductsScreen from "./pages/ProductsScreen";
 import ConfigScreen from "./pages/ConfigScreen";
@@ -40,6 +41,7 @@ const App = () => {
   const [orders, setOrders] = useState([]);
   const [contracts, setContracts] = useState([]);
   const [dayStatus, setDayStatus] = useState({});
+  const [productGroups, setProductGroups] = useState([]);
 
   // UI states
   const [loading, setLoading] = useState(false);
@@ -109,6 +111,16 @@ const App = () => {
         }
         console.warn(
           "API not available for zones, using localStorage fallback",
+        );
+        const result = localStorage.getItem(key);
+        return result ? JSON.parse(result) : null;
+      } else if (key === "productGroups") {
+        const response = await fetch(`${API_URL}/api/product-groups`);
+        if (response.ok) {
+          return await response.json();
+        }
+        console.warn(
+          "API not available for product-groups, using localStorage fallback",
         );
         const result = localStorage.getItem(key);
         return result ? JSON.parse(result) : null;
@@ -523,6 +535,7 @@ const App = () => {
         contractsData,
         ordersData,
         dayStatusData,
+        productGroupsData,
       ] = await Promise.all([
         loadData("company"),
         loadData("gestiuni"),
@@ -535,6 +548,7 @@ const App = () => {
         loadData("contracts"),
         loadData("orders"),
         loadData("dayStatus"),
+        loadData("productGroups"),
       ]);
 
       console.log("✅ Data loaded:", {
@@ -557,6 +571,7 @@ const App = () => {
       setContracts(contractsData || []);
       setOrders(ordersData || []);
       setDayStatus(dayStatusData || {});
+      setProductGroups(productGroupsData || []);
 
       console.log("✅ State updated successfully");
     } catch (error) {
@@ -1130,6 +1145,23 @@ const App = () => {
             currentUser={currentUser}
             showMessage={showMessage}
             saveData={saveData}
+          />
+        );
+      case "export-grouped":
+        return (
+          <ExportScreenGrouped
+            orders={orders}
+            setOrders={setOrders}
+            clients={clients}
+            products={products}
+            gestiuni={gestiuni}
+            company={company}
+            dayStatus={dayStatus}
+            setDayStatus={setDayStatus}
+            currentUser={currentUser}
+            showMessage={showMessage}
+            saveData={saveData}
+            API_URL={API_URL}
           />
         );
       default:
